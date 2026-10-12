@@ -39,7 +39,7 @@ internal static class HwInfoLayout
     public const long MaxAreaBytes = 64L * 1024 * 1024;
 }
 
-internal enum HwInfoReadingType
+public enum HwInfoReadingType
 {
     None = 0,
     Temp = 1,

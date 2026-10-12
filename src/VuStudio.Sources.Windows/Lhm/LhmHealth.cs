@@ -2,7 +2,7 @@ using VuStudio.Core.Sensors;
 
 namespace VuStudio.Sources.Windows.Lhm;
 
-internal enum LhmPhase
+public enum LhmPhase
 {
     /// <summary><c>Open()</c> plus the first update pass (may legitimately be slow).</summary>
     Opening,
@@ -19,7 +19,7 @@ internal enum LhmPhase
     Stopped,
 }
 
-internal enum WatchdogLevel
+public enum WatchdogLevel
 {
     Ok,
     Degraded,
