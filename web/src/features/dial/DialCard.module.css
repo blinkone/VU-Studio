@@ -1,0 +1,60 @@
+.card {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+  background: var(--vs-panel);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
+  box-shadow: 0 10px 30px -18px light-dark(rgba(16, 18, 24, 0.35), rgba(0, 0, 0, 0.9));
+}
+
+.card[data-alarm] {
+  border-color: var(--mantine-color-red-7);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-xs);
+  margin-top: auto;
+  padding-top: var(--mantine-spacing-sm);
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.pageCount {
+  min-width: 2.75rem;
+  text-align: center;
+  font-size: var(--mantine-font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-dimmed);
+}
+
+/* Narrow cards with a pager: the edit button keeps only its icon (its aria-label stays). */
+@container (max-width: 300px) {
+  .actions[data-pager] .editText {
+    display: none;
+  }
+
+  .actions[data-pager] .editButton {
+    padding-inline: 10px;
+  }
+
+  .actions[data-pager] .editButton [data-position='left'] {
+    margin-inline-end: 0;
+  }
+}
