@@ -15,6 +15,10 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
   </ItemGroup>
   <ItemGroup>
+    <!-- The built web UI (web/ → wwwroot) is served from the output directory. -->
+    <Content Update="wwwroot\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="VuStudio.Tests" />
   </ItemGroup>
 </Project>
