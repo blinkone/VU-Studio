@@ -1,0 +1,308 @@
+/* ------------------------------------------------------------------ section cards */
+
+.section {
+  background: var(--vs-panel);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-sm);
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.sectionTitle {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ option cards */
+
+.option {
+  position: relative;
+  height: 100%;
+  padding: 10px 12px;
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-white), rgba(255, 255, 255, 0.02));
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.option:hover {
+  background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.045));
+}
+
+.option[data-checked] {
+  border-color: var(--mantine-primary-color-filled);
+  background: light-dark(var(--mantine-color-amber-0), rgba(255, 177, 31, 0.08));
+  box-shadow: inset 0 0 0 1px var(--mantine-primary-color-filled);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 2px;
+}
+
+.optionIcon {
+  flex: none;
+  display: inline-flex;
+  color: var(--mantine-color-dimmed);
+}
+
+.option[data-checked] .optionIcon {
+  color: light-dark(var(--mantine-color-amber-8), var(--mantine-color-amber-4));
+}
+
+.optionLabel {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.optionDescription {
+  margin-top: 2px;
+  font-size: var(--mantine-font-size-xs);
+  line-height: 1.35;
+  color: var(--mantine-color-dimmed);
+}
+
+/* ------------------------------------------------------------------ header */
+
+.header {
+  background:
+    radial-gradient(70% 120% at 0% 0%, var(--editor-glow, transparent), transparent 70%),
+    var(--vs-panel);
+}
+
+.previewColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.modeBadge {
+  align-self: flex-start;
+}
+
+/* ------------------------------------------------------------------ live readout */
+
+.readout {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.readoutUnit {
+  margin-inline-start: 0.2em;
+  font-size: 0.5em;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--mantine-color-dimmed);
+}
+
+.gauge {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  overflow: hidden;
+}
+
+.gaugeFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--mantine-primary-color-filled);
+  transition: width 300ms ease;
+}
+
+/* ------------------------------------------------------------------ color input */
+
+.colorButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 4px 10px 4px 5px;
+  border: 1px solid light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-4));
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+  color: var(--mantine-color-text);
+  font-size: var(--mantine-font-size-sm);
+  transition: border-color 150ms ease;
+}
+
+.colorButton:hover {
+  border-color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+}
+
+.colorButton:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 1px;
+}
+
+.colorButton[data-compact] {
+  width: auto;
+  padding-right: 8px;
+}
+
+.swatch {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: calc(var(--mantine-radius-md) - 2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 0 10px -2px var(--swatch-glow, transparent);
+}
+
+.hex {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-xs);
+  white-space: nowrap;
+}
+
+.presetSwatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  transition: transform 120ms ease;
+}
+
+.presetSwatch:hover {
+  transform: scale(1.12);
+}
+
+.presetSwatch:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ gradient */
+
+.gradientBar {
+  position: relative;
+  height: 36px;
+  border-radius: var(--mantine-radius-md);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 8px 24px -14px rgba(0, 0, 0, 0.8);
+}
+
+.gradientStop {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.needleMarker {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 3px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: light-dark(var(--mantine-color-dark-7), var(--mantine-color-white));
+  box-shadow: 0 0 0 1px light-dark(rgba(255, 255, 255, 0.8), rgba(0, 0, 0, 0.6));
+  transition: left 300ms ease;
+  pointer-events: none;
+}
+
+.row {
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.025));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
+
+/* ------------------------------------------------------------------ live color */
+
+.nowSwatch {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: var(--mantine-radius-lg);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 0 24px -4px var(--swatch-glow, transparent);
+  transition:
+    background-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.level {
+  display: grid;
+  grid-template-columns: 14px 1fr 30px;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--mantine-font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-dimmed);
+}
+
+/* ------------------------------------------------------------------ alarms */
+
+.alarm {
+  border-left: 3px solid var(--alarm-color, var(--mantine-color-red-6));
+}
+
+.alarm[data-disabled] {
+  opacity: 0.65;
+}
+
+/* ------------------------------------------------------------------ pages */
+
+.pageRow {
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.pageRow[data-selected] {
+  border-color: var(--mantine-primary-color-filled);
+  background: light-dark(var(--mantine-color-amber-0), rgba(255, 177, 31, 0.06));
+}
+
+.pageIndex {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+}
+
+.pageRow[data-selected] .pageIndex {
+  background: var(--mantine-primary-color-filled);
+  color: var(--mantine-primary-color-contrast);
+}
+
+.pageSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
