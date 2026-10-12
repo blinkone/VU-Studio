@@ -1,0 +1,74 @@
+/* The profile that drives the dials right now gets the primary color as a border and a soft glow. */
+.activeCard {
+  border-color: var(--mantine-primary-color-filled);
+  box-shadow:
+    0 0 0 1px var(--mantine-primary-color-filled),
+    0 10px 32px -18px var(--mantine-primary-color-filled);
+}
+
+.card {
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+/* Everything but the switch fades when a profile is disabled. */
+.disabledBody {
+  opacity: 0.6;
+}
+
+.liveDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liveDot {
+    animation: none;
+  }
+}
+
+.rail {
+  align-items: center;
+  flex: none;
+}
+
+.title {
+  color: inherit;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.title:hover {
+  text-decoration: underline;
+}
+
+.condition {
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.slotRow {
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.slotRow:first-of-type {
+  border-top: 0;
+}
