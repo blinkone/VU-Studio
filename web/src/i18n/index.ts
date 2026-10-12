@@ -25,7 +25,13 @@ void i18n
     defaultNS: 'common',
     ns: Object.keys(resources.en ?? { common: {} }),
     interpolation: { escapeValue: false },
-    detection: { order: ['localStorage', 'navigator'], caches: ['localStorage'], lookupLocalStorage: 'vustudio.lang' },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'vustudio.lang',
+      // Some environments report tags like "en-US@posix" that Intl rejects; keep the plain BCP 47 part.
+      convertDetectedLanguage: (lng: string) => lng.split(/[@.]/)[0].replace('_', '-'),
+    },
   });
 
 /** Picks the right language from a LocalizedText coming from the service. */
