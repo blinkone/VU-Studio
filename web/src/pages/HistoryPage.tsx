@@ -1,6 +1,6 @@
-import { Title } from '@mantine/core';
+import { HistoryView } from '@/features/history/HistoryView';
 
-// Placeholder — implemented by a feature agent.
+/** /history — charts and statistics of up to four sensors. */
 export function HistoryPage() {
-  return <Title order={2}>HistoryPage</Title>;
+  return <HistoryView />;
 }

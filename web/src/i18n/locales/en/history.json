@@ -1,0 +1,59 @@
+{
+  "title": "History",
+  "subtitle": "See how up to four sensors changed over time: minimum, average, maximum and the latest value.",
+  "picker": {
+    "label": "Add a sensor",
+    "placeholder": "Search a sensor…",
+    "full": "Up to {{count}} sensors"
+  },
+  "range": { "label": "Time range" },
+  "ranges": {
+    "15m": { "short": "15 min", "long": "last 15 minutes" },
+    "1h": { "short": "1 h", "long": "last hour" },
+    "6h": { "short": "6 h", "long": "last 6 hours" },
+    "24h": { "short": "24 h", "long": "last 24 hours" },
+    "7d": { "short": "7 d", "long": "last 7 days" },
+    "30d": { "short": "30 d", "long": "last 30 days" }
+  },
+  "view": { "label": "Show as", "chart": "Chart", "table": "Table" },
+  "export": {
+    "button": "Export CSV",
+    "standard": "Standard CSV",
+    "standardHint": "Commas, ISO times in UTC",
+    "excel": "CSV for Excel",
+    "excelHint": "Semicolons, decimal commas, local time"
+  },
+  "updated": "Updated {{time}}",
+  "chips": {
+    "label": "Selected sensors",
+    "remove": "Remove {{name}}",
+    "missing": "This sensor is not in the catalog any more. Stored history may still exist.",
+    "notNumeric": "Only numeric sensors can be charted."
+  },
+  "stats": {
+    "min": "Min",
+    "avg": "Avg",
+    "max": "Max",
+    "last": "Last",
+    "loading": "Loading…",
+    "noData": "No data in this range yet",
+    "since": "Recorded since {{time}}"
+  },
+  "chart": {
+    "titleUnit": "Values in {{unit}}",
+    "titleNoUnit": "Values",
+    "legend": "Sensors in this chart",
+    "loading": "Loading history…",
+    "emptyTitle": "No history yet",
+    "emptyBody": "Recording starts when a sensor is used on a dial or opened here. The chart fills in as data arrives: every second in the 15-minute view, once a minute for longer ranges.",
+    "errorTitle": "Could not load the history",
+    "errorBody": "VU Studio did not return any data. It will try again shortly."
+  },
+  "table": { "label": "History data", "time": "Time" },
+  "empty": {
+    "title": "Pick a sensor to see its history",
+    "body": "VU Studio records history for the sensors you use on your dials and for the ones you open here. Recording starts the first time you add a sensor.",
+    "suggestions": "Try one of these"
+  },
+  "footnote": "Longer ranges show one point per minute, grouped when there are many; the shaded band is the minimum to maximum of each group and the line is the average."
+}
