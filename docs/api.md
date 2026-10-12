@@ -161,3 +161,15 @@ Server → client:
 |---|---|
 | `notify` | `title`, `message`, `icon` |
 | `providers` | `items: [ProviderInstanceConfig]` — the user-session providers (scripts) the tray must run |
+
+## Agent API (VU Studio Agent on other machines)
+
+Default port **5342**. When an agent token is configured, every endpoint requires `Authorization: Bearer <token>`. The agent advertises itself over mDNS as `_vustudio._tcp` with TXT `role=agent`, `v=1` and `name=<display name>`.
+
+| Method | Path | Result |
+|---|---|---|
+| GET | `/api/v1/info` | `{ name, version, os, hostname, uptimeSeconds }` |
+| GET | `/api/v1/sensors` | `{ name, version, time, catalogVersion, sensors: [SensorInfo with local ids], values: { "<id>": number \| string \| null } }` |
+
+* Ids are the agent's own `{providerId}/{path}`, e.g. `system/cpu/load` or `unraid/disk/disk1/temp`.
+* The service's `agent` provider polls this endpoint every 2 s by default. It re-publishes each sensor as `<agentProviderInstanceId>/<id>` with `Host = name`.
