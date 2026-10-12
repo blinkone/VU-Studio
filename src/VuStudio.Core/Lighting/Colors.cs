@@ -21,6 +21,7 @@ public readonly record struct RgbwColor(byte R, byte G, byte B, byte W = 0)
     public static readonly RgbwColor Blue = new(0, 80, 255);
     public static readonly RgbwColor WarmWhite = new(255, 170, 90, 120);
 
+    [JsonIgnore]
     public bool IsOff => R == 0 && G == 0 && B == 0 && W == 0;
 
     public string ToHex() => W == 0 ? $"#{R:X2}{G:X2}{B:X2}" : $"#{R:X2}{G:X2}{B:X2}+{W:X2}";
@@ -113,6 +114,7 @@ public readonly record struct LedLevels(byte R, byte G, byte B, byte W)
 {
     public static readonly LedLevels Off = new(0, 0, 0, 0);
 
+    [JsonIgnore]
     public bool IsOff => R == 0 && G == 0 && B == 0 && W == 0;
 
     /// <summary>Largest per-channel difference, used to skip imperceptible updates.</summary>
