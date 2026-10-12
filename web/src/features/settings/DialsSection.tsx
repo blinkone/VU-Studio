@@ -39,7 +39,7 @@ export function DialsSection({ onCalibrate }: DialsSectionProps) {
       description={t('dials.description')}
       icon={<IconGauge size={20} />}
       right={
-        <Button variant="light" size="xs" leftSection={<IconRuler2 size={15} />} disabled={!hasOnline} onClick={() => onCalibrate()}>
+        <Button variant="light" size="xs" visibleFrom="sm" leftSection={<IconRuler2 size={15} />} disabled={!hasOnline} onClick={() => onCalibrate()}>
           {t('dials.calibrate')}
         </Button>
       }
