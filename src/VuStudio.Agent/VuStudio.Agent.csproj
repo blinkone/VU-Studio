@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>VuStudio.Agent</RootNamespace>
+    <AssemblyName>vustudio-agent</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VuStudio.Core\VuStudio.Core.csproj" />
+    <ProjectReference Include="..\VuStudio.Sources\VuStudio.Sources.csproj" />
+    <ProjectReference Include="..\VuStudio.Sources.Windows\VuStudio.Sources.Windows.csproj" />
+  </ItemGroup>
+</Project>

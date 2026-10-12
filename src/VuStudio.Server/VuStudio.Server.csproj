@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>VuStudio.Server</RootNamespace>
+    <AssemblyName>VuStudio.Server</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VuStudio.Core\VuStudio.Core.csproj" />
+    <ProjectReference Include="..\VuStudio.Hardware\VuStudio.Hardware.csproj" />
+    <ProjectReference Include="..\VuStudio.Rendering\VuStudio.Rendering.csproj" />
+    <ProjectReference Include="..\VuStudio.Sources\VuStudio.Sources.csproj" />
+    <ProjectReference Include="..\VuStudio.Sources.Windows\VuStudio.Sources.Windows.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="VuStudio.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>VuStudio.Sources.Windows</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VuStudio.Core\VuStudio.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="VuStudio.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,30 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.DotSettings.user
+TestResults/
+artifacts/
+publish/
+
+# Node / web
+node_modules/
+web/dist/
+src/VuStudio.Server/wwwroot/
+*.tsbuildinfo
+
+# Local data
+*.db
+*.db-shm
+*.db-wal
+/data/
+.vustudio/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VuStudio.Agent/VuStudio.Agent.csproj" />
+    <Project Path="src/VuStudio.Core/VuStudio.Core.csproj" />
+    <Project Path="src/VuStudio.Hardware/VuStudio.Hardware.csproj" />
+    <Project Path="src/VuStudio.Rendering/VuStudio.Rendering.csproj" />
+    <Project Path="src/VuStudio.Server/VuStudio.Server.csproj" />
+    <Project Path="src/VuStudio.Sources.Windows/VuStudio.Sources.Windows.csproj" />
+    <Project Path="src/VuStudio.Sources/VuStudio.Sources.csproj" />
+    <Project Path="src/VuStudio.Tray/VuStudio.Tray.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VuStudio.Tests/VuStudio.Tests.csproj" />
+  </Folder>
+</Solution>

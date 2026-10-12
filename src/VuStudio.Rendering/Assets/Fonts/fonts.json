@@ -1,0 +1,286 @@
+{
+  "fonts": [
+    {
+      "id": "inter",
+      "family": "Inter",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "Inter/Inter[opsz,wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              100,
+              900
+            ],
+            "opsz": [
+              14,
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "barlow-condensed",
+      "family": "Barlow Condensed",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "BarlowCondensed/BarlowCondensed-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        },
+        {
+          "path": "BarlowCondensed/BarlowCondensed-Medium.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 500
+        },
+        {
+          "path": "BarlowCondensed/BarlowCondensed-SemiBold.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 600
+        },
+        {
+          "path": "BarlowCondensed/BarlowCondensed-Bold.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 700
+        }
+      ]
+    },
+    {
+      "id": "b612",
+      "family": "B612",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "B612/B612-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        },
+        {
+          "path": "B612/B612-Bold.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 700
+        }
+      ]
+    },
+    {
+      "id": "b612-mono",
+      "family": "B612 Mono",
+      "category": "mono",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "B612Mono/B612Mono-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        },
+        {
+          "path": "B612Mono/B612Mono-Bold.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 700
+        }
+      ]
+    },
+    {
+      "id": "orbitron",
+      "family": "Orbitron",
+      "category": "display",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "Orbitron/Orbitron[wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              400,
+              900
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "share-tech-mono",
+      "family": "Share Tech Mono",
+      "category": "mono",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "ShareTechMono/ShareTechMono-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        }
+      ]
+    },
+    {
+      "id": "libre-baskerville",
+      "family": "Libre Baskerville",
+      "category": "serif",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "LibreBaskerville/LibreBaskerville[wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              400,
+              700
+            ]
+          }
+        },
+        {
+          "path": "LibreBaskerville/LibreBaskerville-Italic[wght].ttf",
+          "italic": true,
+          "variable": true,
+          "axes": {
+            "wght": [
+              400,
+              700
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "oswald",
+      "family": "Oswald",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "Oswald/Oswald[wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              200,
+              700
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bebas-neue",
+      "family": "Bebas Neue",
+      "category": "display",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "BebasNeue/BebasNeue-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        }
+      ]
+    },
+    {
+      "id": "silkscreen",
+      "family": "Silkscreen",
+      "category": "pixel",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "Silkscreen/Silkscreen-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        },
+        {
+          "path": "Silkscreen/Silkscreen-Bold.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 700
+        }
+      ]
+    },
+    {
+      "id": "vt323",
+      "family": "VT323",
+      "category": "pixel",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "VT323/VT323-Regular.ttf",
+          "italic": false,
+          "variable": false,
+          "weight": 400
+        }
+      ]
+    },
+    {
+      "id": "jetbrains-mono",
+      "family": "JetBrains Mono",
+      "category": "mono",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "JetBrainsMono/JetBrainsMono[wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              100,
+              800
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "space-grotesk",
+      "family": "Space Grotesk",
+      "category": "sans",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "SpaceGrotesk/SpaceGrotesk[wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              300,
+              700
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "teko",
+      "family": "Teko",
+      "category": "condensed",
+      "license": "OFL-1.1",
+      "files": [
+        {
+          "path": "Teko/Teko[wght].ttf",
+          "italic": false,
+          "variable": true,
+          "axes": {
+            "wght": [
+              300,
+              700
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
