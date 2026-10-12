@@ -6,6 +6,7 @@ using VuStudio.Core.Faces;
 using VuStudio.Core.History;
 using VuStudio.Core.Providers;
 using VuStudio.Core.Sensors;
+using VuStudio.Hardware;
 using VuStudio.Server;
 using VuStudio.Server.Api;
 using VuStudio.Server.Hosting;
@@ -104,7 +105,8 @@ services.AddSingleton<IHistoryPersistence>(sp => sp.GetRequiredService<SqliteHis
 services.AddSingleton<HistoryRecorder>();
 services.AddSingleton<IAssetStore>(_ => new FileAssetStore(paths.Assets));
 services.AddSingleton<IFaceRenderer, PlaceholderRenderer>();
-services.AddSingleton<IHardwareHost, OfflineHardwareHost>();
+services.AddSingleton(sp => new DialController(new DialControllerOptions(), sp.GetRequiredService<ILogger<DialController>>()));
+services.AddSingleton<IHardwareHost, DialControllerHost>();
 services.AddSingleton<IDialOutput>(sp => sp.GetRequiredService<IHardwareHost>().Output);
 services.AddSingleton<NotificationHub>();
 services.AddSingleton<INotificationSink>(sp => sp.GetRequiredService<NotificationHub>());
