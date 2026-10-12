@@ -67,6 +67,7 @@ builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.Encoder = shared.Encoder;
     o.SerializerOptions.ReadCommentHandling = shared.ReadCommentHandling;
     o.SerializerOptions.AllowTrailingCommas = true;
+    o.SerializerOptions.AllowOutOfOrderMetadataProperties = true;
     foreach (var converter in shared.Converters)
     {
         o.SerializerOptions.Converters.Add(converter);
@@ -80,6 +81,7 @@ services.AddSingleton(paths);
 services.AddSingleton(configStore);
 services.AddHttpClient();
 services.AddSingleton<SensorHub>();
+services.AddSingleton(_ => new VuStudio.Sources.Push.PushGateway());
 
 var providerAssemblies = new[] { "VuStudio.Sources", "VuStudio.Sources.Windows" }
     .Select(name =>
