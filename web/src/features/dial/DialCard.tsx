@@ -41,7 +41,7 @@ export function DialCard({ dial }: DialCardProps) {
     <Card className={classes.card} padding="lg" data-alarm={dial.alarmActive || undefined}>
       <DialPreview slot={dial.slot} state={dial} ambient to={editPath} />
 
-      <div className={classes.actions}>
+      <div className={classes.actions} data-pager={multiPage || undefined}>
         {multiPage ? (
           <div className={classes.pager}>
             <ActionIcon variant="subtle" color="gray" size="lg" disabled={busy} onClick={() => advance(-1)} aria-label={t('actions.previous')}>
@@ -73,8 +73,9 @@ export function DialCard({ dial }: DialCardProps) {
             size="sm"
             leftSection={<IconAdjustmentsHorizontal size={16} />}
             aria-label={t('actions.editDial', { slot: dial.slot })}
+            className={classes.editButton}
           >
-            {t('actions.edit')}
+            <span className={classes.editText}>{t('actions.edit')}</span>
           </Button>
         </Group>
       </div>

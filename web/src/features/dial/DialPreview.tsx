@@ -24,10 +24,12 @@ export interface DialPreviewProps {
   color?: string | null;
   /** Title shown under the dial instead of the live one. */
   title?: string;
-  /** Reading shown under the dial instead of the live value (already formatted). */
-  valueText?: string;
+  /** Reading shown under the dial instead of the live value (already formatted); null = no value. */
+  valueText?: string | null;
   /** Shows the slot, name, status, title, value and page dots around the dial. */
   withInfo?: boolean;
+  /** With `withInfo`, also shows the slot/name/status row above the dial. */
+  withHeader?: boolean;
   /** Soft colored light spilling behind the dial. */
   ambient?: boolean;
   /** Makes the dial a link (e.g. to its editor). */
@@ -57,6 +59,7 @@ export function DialPreview({
   title,
   valueText,
   withInfo = true,
+  withHeader = true,
   ambient = false,
   to,
   linkLabel,
@@ -88,7 +91,7 @@ export function DialPreview({
   const ariaLabel = t('dial.aria', {
     slot,
     title: shownTitle,
-    value: valueText ?? (unassigned ? t('dial.unassigned') : formatReading(state?.value, state?.unit, state?.valueText, i18n.language)),
+    value: valueText ?? (valueText === null ? t('dial.noValue') : unassigned ? t('dial.unassigned') : formatReading(state?.value, state?.unit, state?.valueText, i18n.language)),
     light: lit ? lightHex : t('dial.lightOff'),
   });
 
@@ -110,7 +113,7 @@ export function DialPreview({
 
   return (
     <div className={classes.root} data-size={size}>
-      {withInfo && (
+      {withInfo && withHeader && (
         <div className={classes.head}>
           <div className={classes.slotLabel}>
             <span className={classes.slotNumber}>{t('common:slot', { slot })}</span>
@@ -153,7 +156,11 @@ export function DialPreview({
             <span className={classes.title} title={shownTitle}>
               {shownTitle}
             </span>
-            {valueText !== undefined ? (
+            {valueText === null ? (
+              <span className={classes.value} data-muted>
+                {t('dial.noValue')}
+              </span>
+            ) : valueText !== undefined ? (
               <span className={classes.value}>{valueText}</span>
             ) : unassigned ? (
               <span className={classes.value} data-muted>

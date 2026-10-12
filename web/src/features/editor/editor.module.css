@@ -260,7 +260,7 @@
 /* ------------------------------------------------------------------ alarms */
 
 .alarm {
-  border-left: 3px solid var(--alarm-color, var(--mantine-color-red-6));
+  box-shadow: inset 3px 0 0 var(--alarm-color, var(--mantine-color-red-6));
 }
 
 .alarm[data-disabled] {

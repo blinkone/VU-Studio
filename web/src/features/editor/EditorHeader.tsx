@@ -1,13 +1,13 @@
 import { useMemo, type CSSProperties } from 'react';
 import { Alert, Badge, Grid, Group, Paper, ScrollArea, SegmentedControl, Select, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { IconEye, IconInfoCircle, IconLivePhoto } from '@tabler/icons-react';
+import { IconDatabase, IconEye, IconInfoCircle, IconLivePhoto, IconPhoto } from '@tabler/icons-react';
 import { useDialState } from '@/api/hooks';
 import { useLive } from '@/api/live';
-import { useSensors } from '@/api/queries';
+import { useSensors, useThemes } from '@/api/queries';
 import { DialPreview } from '@/features/dial/DialPreview';
 import { formatReading } from '@/features/dial/format';
-import { pageLabel } from './pageLabels';
+import { pageLabel, themeLabel } from './pageLabels';
 import type { DialEditorModel } from './useDialEditor';
 import { useFacePreview, usePageLightPreview, type PageReading } from './usePagePreview';
 import classes from './editor.module.css';
@@ -21,6 +21,7 @@ export function EditorHeader({ model, reading }: { model: DialEditorModel; readi
   const dial = useDialState(model.slot);
   const activeProfileId = useLive((s) => s.state?.engine.activeProfileId);
   const { data: sensors } = useSensors();
+  const { data: themes } = useThemes();
   const { page, profile, assignment } = model;
 
   const savedPage = model.base?.profiles.find((p) => p.id === profile.id)?.dials.find((d) => d.slot === model.slot)?.pages.find((p) => p.id === page?.id);
@@ -73,14 +74,15 @@ export function EditorHeader({ model, reading }: { model: DialEditorModel; readi
                 slot={model.slot}
                 size="lg"
                 ambient
+                withHeader={false}
                 faceUrl={faceUrl}
                 needle={reading.fraction * 100}
                 color={previewColor}
                 title={previewTitle}
-                valueText={formatReading(reading.display, reading.range.unit, reading.text, i18n.language, page?.value.decimals)}
+                valueText={reading.display === undefined && !reading.text ? null : formatReading(reading.display, reading.range.unit, reading.text, i18n.language, page?.value.decimals)}
               />
             ) : (
-              <DialPreview slot={model.slot} size="lg" ambient />
+              <DialPreview slot={model.slot} size="lg" ambient withHeader={false} />
             )}
           </div>
         </Grid.Col>
@@ -88,13 +90,38 @@ export function EditorHeader({ model, reading }: { model: DialEditorModel; readi
         <Grid.Col span={{ base: 12, sm: 6, md: 7, lg: 8 }}>
           <Stack gap="md">
             <div>
-              <Text size="xs" fw={700} tt="uppercase" c="dimmed" style={{ letterSpacing: '0.08em' }}>
-                {t('common:slot', { slot: model.slot })}
-                {dial?.name ? ` · ${dial.name}` : ''}
-              </Text>
-              <Title order={1} size="h2" lineClamp={2}>
+              <Group gap="xs" wrap="wrap">
+                <Text size="xs" fw={700} tt="uppercase" c="dimmed" style={{ letterSpacing: '0.08em' }}>
+                  {t('common:slot', { slot: model.slot })}
+                  {dial?.name ? ` · ${dial.name}` : ''}
+                </Text>
+                <Badge size="xs" variant="dot" color={dial?.alarmActive ? 'red' : dial?.online ? 'teal' : 'gray'}>
+                  {dial?.alarmActive ? t('dashboard:dial.alarm') : dial?.online ? t('dashboard:dial.online') : t('dashboard:dial.offline')}
+                </Badge>
+              </Group>
+              <Title order={1} size="h2" lineClamp={2} mt={4}>
                 {page ? pageLabel(page, model.pageIndex, sensors, t) : t('header.titleEmpty')}
               </Title>
+              {page && (
+                <Group gap={6} mt="sm" wrap="wrap">
+                  <Badge variant="light" color="gray" radius="sm" leftSection={<IconDatabase size={12} />} tt="none" fw={500}>
+                    {reading.sensor?.name ?? page.value.sensorId ?? t('pages.noSensor')}
+                  </Badge>
+                  <Badge variant="light" color="gray" radius="sm" leftSection={<IconPhoto size={12} />} tt="none" fw={500}>
+                    {page.face.custom ? t('pages.customFace') : themeLabel(page.face.theme, themes, i18n.language)}
+                  </Badge>
+                  <Badge
+                    variant="light"
+                    color="gray"
+                    radius="sm"
+                    tt="none"
+                    fw={500}
+                    leftSection={<span className={classes.pageSwatch} style={{ width: 10, height: 10, background: previewColor ?? 'transparent' }} />}
+                  >
+                    {t(`light.modes.${page.light.mode}.label`)}
+                  </Badge>
+                </Group>
+              )}
             </div>
 
             <Select

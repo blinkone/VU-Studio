@@ -209,7 +209,7 @@ function LiveColor({ model }: { model: DialEditorModel }) {
   const off = !dial || isDark(dial.light);
 
   return (
-    <Paper withBorder p={{ base: 'md', sm: 'lg' }} h="100%" className={classes.section}>
+    <Paper withBorder p={{ base: 'md', sm: 'lg' }} className={classes.section}>
       <Stack gap="md">
         <div>
           <Text size="sm" fw={600}>

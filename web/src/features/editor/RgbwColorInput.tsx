@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { Badge, ColorPicker, Group, Input, Popover, Slider, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
+import { Badge, ColorPicker, Group, Input, Popover, SimpleGrid, Slider, Stack, Text, TextInput, UnstyledButton } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import type { RgbwHex } from '@/api/types';
@@ -109,7 +109,7 @@ export function RgbwColorInput({ value, onChange, label, description, ariaLabel,
                 {t('color.whiteHint')}
               </Text>
             </div>
-            <Group gap={6} justify="space-between">
+            <SimpleGrid cols={5} spacing={8} verticalSpacing={8} style={{ justifyItems: 'center' }}>
               {COLOR_SWATCHES.map((swatch) => (
                 <button
                   key={swatch}
@@ -121,7 +121,7 @@ export function RgbwColorInput({ value, onChange, label, description, ariaLabel,
                   title={swatch}
                 />
               ))}
-            </Group>
+            </SimpleGrid>
           </Stack>
         </Popover.Dropdown>
       </Popover>

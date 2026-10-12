@@ -1,4 +1,5 @@
 import { Anchor, Center, Group, Loader, Paper, Stack, Tabs, Text, Title } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 import { IconArrowLeft, IconBulb, IconDatabase, IconLayoutGrid, IconPhoto } from '@tabler/icons-react';
@@ -67,6 +68,7 @@ function Editor({ slot }: { slot: number }) {
 function EditorBody({ model }: { model: DialEditorModel }) {
   const { t } = useTranslation('editor');
   const reading = usePageReading(model.page, model.config.general);
+  const wide = useMediaQuery('(min-width: 30em)', true);
   const { page } = model;
 
   return (
@@ -76,20 +78,20 @@ function EditorBody({ model }: { model: DialEditorModel }) {
         <NoAssignment model={model} />
       ) : (
         <Tabs value={model.tab} onChange={(v) => v && model.setTab(v as EditorTab)} keepMounted={false} variant="pills" radius="xl">
-          <Tabs.List mb="lg" style={{ flexWrap: 'nowrap', overflowX: 'auto' }}>
-            <Tabs.Tab value="data" leftSection={<IconDatabase size={16} />}>
+          <Tabs.List mb="lg" grow={!wide} style={{ flexWrap: 'nowrap' }}>
+            <Tabs.Tab value="data" leftSection={wide ? <IconDatabase size={16} /> : undefined}>
               {t('tabs.data')}
             </Tabs.Tab>
-            <Tabs.Tab value="face" leftSection={<IconPhoto size={16} />}>
+            <Tabs.Tab value="face" leftSection={wide ? <IconPhoto size={16} /> : undefined}>
               {t('tabs.face')}
             </Tabs.Tab>
-            <Tabs.Tab value="light" leftSection={<IconBulb size={16} />}>
+            <Tabs.Tab value="light" leftSection={wide ? <IconBulb size={16} /> : undefined}>
               {t('tabs.light')}
             </Tabs.Tab>
-            <Tabs.Tab value="pages" leftSection={<IconLayoutGrid size={16} />}>
+            <Tabs.Tab value="pages" leftSection={wide ? <IconLayoutGrid size={16} /> : undefined}>
               {t('tabs.pages')}
               {model.assignment.pages.length > 1 && (
-                <Text span size="xs" c="dimmed" ml={6}>
+                <Text span size="xs" ml={6} opacity={0.7} inherit>
                   {model.assignment.pages.length}
                 </Text>
               )}
