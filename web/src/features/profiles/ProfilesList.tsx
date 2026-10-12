@@ -29,7 +29,10 @@ export function ProfilesList() {
   const draft = useConfigDraft((s) => s.draft);
   const base = useConfigDraft((s) => s.base);
   const update = useConfigDraft((s) => s.update);
-  const engine = useLive((s) => s.state?.engine);
+  // Primitive selectors: the engine snapshot object changes ten times a second.
+  const hasEngine = useLive((s) => !!s.state);
+  const activeId = useLive((s) => s.state?.engine.activeProfileId);
+  const manualId = useLive((s) => s.state?.engine.manualProfileId);
 
   const [busy, setBusy] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Profile | null>(null);
@@ -45,9 +48,8 @@ export function ProfilesList() {
 
   const profiles = draft.profiles;
   const sorted = sortProfiles(profiles);
-  const manualId = engine?.manualProfileId;
   const manualProfile = manualId ? profiles.find((p) => p.id === manualId) : undefined;
-  const activeProfile = engine?.activeProfileId ? profiles.find((p) => p.id === engine.activeProfileId) : undefined;
+  const activeProfile = activeId ? profiles.find((p) => p.id === activeId) : undefined;
 
   const setActive = async (profileId: string | null) => {
     setBusy(profileId ?? '__auto__');
@@ -122,7 +124,7 @@ export function ProfilesList() {
         </Menu>
       </Group>
 
-      {engine && (
+      {hasEngine && (
         <Paper withBorder p="sm" px="md">
           <Group justify="space-between" wrap="wrap" gap="sm">
             <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
@@ -165,7 +167,7 @@ export function ProfilesList() {
                 shadowedBy={findShadowingProfile(profile, profiles)}
                 rank={rank}
                 count={sorted.length}
-                active={engine?.activeProfileId === profile.id}
+                active={activeId === profile.id}
                 forced={manualId === profile.id}
                 canActivate={profile.enabled && saved?.enabled === true}
                 canDelete={profiles.length > 1}

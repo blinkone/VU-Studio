@@ -38,9 +38,11 @@ export function mergeDials(hardware: readonly DialInfo[], settings: readonly Dia
 
 /** Dial rows from the live hardware list and the configuration draft. */
 export function useDialRows(): DialRow[] {
-  const hardware = useLive((s) => s.state?.hardware);
+  // Every state message carries a fresh `hardware` array; compare by content so the dial table does
+  // not re-render ten times a second.
+  const hardwareJson = useLive((s) => JSON.stringify(s.state?.hardware ?? []));
   const dials = useConfigDraft((s) => s.draft?.hardware.dials);
-  return useMemo(() => mergeDials(hardware ?? [], dials ?? []), [hardware, dials]);
+  return useMemo(() => mergeDials(JSON.parse(hardwareJson) as DialInfo[], dials ?? []), [hardwareJson, dials]);
 }
 
 export function nextFreeSlot(dials: readonly DialSettings[]): number {

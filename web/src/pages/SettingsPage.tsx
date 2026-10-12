@@ -37,7 +37,8 @@ export function SettingsPage() {
   if (!current) return <Navigate to="/settings/hardware" replace />;
 
   return (
-    <Box maw={1100}>
+    // Bottom padding keeps the last controls clear of the floating save bar.
+    <Box maw={1100} pb={96}>
       <Stack gap="lg">
         <div>
           <Title order={2}>{t('title')}</Title>

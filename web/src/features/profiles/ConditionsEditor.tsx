@@ -201,8 +201,12 @@ function ProcessesEditor({ condition, onChange }: { condition: ProcessCondition;
         data={foreground && !has(foreground) ? [foreground] : []}
         value={condition.processes}
         onChange={(processes) => onChange({ ...condition, processes: processes.map((p) => p.trim()).filter(Boolean) })}
-        error={condition.processes.length === 0 ? t('conditions.programsEmpty') : undefined}
       />
+      {condition.processes.length === 0 && (
+        <Text size="xs" c="yellow.7">
+          {t('conditions.programsEmpty')}
+        </Text>
+      )}
       <Group gap="xs" align="center">
         {foreground && !has(foreground) && (
           <Button size="compact-xs" variant="light" leftSection={<IconPlus size={13} />} onClick={() => add(foreground)}>

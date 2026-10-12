@@ -6,7 +6,8 @@ import { ProfilesList } from '@/features/profiles/ProfilesList';
 /** `/profiles` (list) and `/profiles/:id` (editor). */
 export function ProfilesPage() {
   return (
-    <Box maw={1200}>
+    // Bottom padding keeps the last controls clear of the floating save bar.
+    <Box maw={1200} pb={96}>
       <Routes>
         <Route index element={<Box maw={980}><ProfilesList /></Box>} />
         <Route path=":id" element={<ProfileEditor />} />

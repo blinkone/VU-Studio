@@ -42,7 +42,9 @@ export function ProfileEditor() {
   const draft = useConfigDraft((s) => s.draft);
   const base = useConfigDraft((s) => s.base);
   const update = useConfigDraft((s) => s.update);
-  const engine = useLive((s) => s.state?.engine);
+  // Primitive selectors: the engine snapshot object changes ten times a second.
+  const activeId = useLive((s) => s.state?.engine.activeProfileId);
+  const manualId = useLive((s) => s.state?.engine.manualProfileId);
   const [busy, setBusy] = useState(false);
 
   if (!draft) {
@@ -77,8 +79,8 @@ export function ProfileEditor() {
       if (target) recipe(target);
     });
 
-  const active = engine?.activeProfileId === profile.id;
-  const forced = engine?.manualProfileId === profile.id;
+  const active = activeId === profile.id;
+  const forced = manualId === profile.id;
   const saved = base?.profiles.find((p) => p.id === profile.id);
   const canActivate = profile.enabled && saved?.enabled === true;
   const shadowedBy = findShadowingProfile(profile, draft.profiles);

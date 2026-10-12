@@ -16,7 +16,11 @@ const MAX_SIMULATED = 16;
 export function HubSection() {
   const { t } = useTranslation('settings');
   const connection = useLive((s) => s.status);
-  const hub = useLive((s) => s.state?.hub);
+  // The hub object is re-created by every state message: pick primitives instead.
+  const hubState = useLive((s) => s.state?.hub.state);
+  const hubPort = useLive((s) => s.state?.hub.port);
+  const hubMessage = useLive((s) => s.state?.hub.message);
+  const hubSimulated = useLive((s) => s.state?.hub.simulated ?? false);
   const { data: info } = useInfo();
   const port = useConfigDraft((s) => s.draft?.hardware.port ?? 'auto');
   const simulate = useConfigDraft((s) => s.draft?.hardware.simulate ?? 0);
@@ -26,17 +30,17 @@ export function HubSection() {
   const auto = port.trim().toLowerCase() === 'auto' || port.trim() === '';
   const [portText, setPortText] = useState(auto ? '' : port);
 
-  const connected = connection === 'open' && hub?.state === 'connected';
+  const connected = connection === 'open' && hubState === 'connected';
   const status =
     connection !== 'open'
       ? { color: 'gray', label: t('hub.status.service') }
-      : hub?.state === 'connected'
-        ? hub.simulated
+      : hubState === 'connected'
+        ? hubSimulated
           ? { color: 'grape', label: t('hub.status.simulated') }
-          : { color: 'teal', label: t('hub.status.connected', { port: hub.port ?? '?' }) }
-        : hub?.state === 'connecting'
+          : { color: 'teal', label: t('hub.status.connected', { port: hubPort ?? '?' }) }
+        : hubState === 'connecting'
           ? { color: 'yellow', label: t('hub.status.connecting') }
-          : hub?.state === 'error'
+          : hubState === 'error'
             ? { color: 'red', label: t('hub.status.error') }
             : { color: 'gray', label: t('hub.status.none') };
 
@@ -63,9 +67,9 @@ export function HubSection() {
       }
     >
       <Stack gap="lg">
-        {hub?.message && connection === 'open' && hub.state !== 'connected' && (
-          <Alert variant="light" color={hub.state === 'error' ? 'red' : 'gray'} icon={<IconInfoCircle size={18} />} p="sm">
-            <Text size="sm">{hub.message}</Text>
+        {hubMessage && connection === 'open' && hubState !== 'connected' && (
+          <Alert variant="light" color={hubState === 'error' ? 'red' : 'gray'} icon={<IconInfoCircle size={18} />} p="sm">
+            <Text size="sm">{hubMessage}</Text>
           </Alert>
         )}
 
@@ -80,7 +84,7 @@ export function HubSection() {
                   d.hardware.port = 'auto';
                 });
               } else {
-                const suggested = hub?.port && !hub.simulated ? hub.port : defaultPort;
+                const suggested = hubPort && !hubSimulated ? hubPort : defaultPort;
                 setPortText(suggested);
                 update((d) => {
                   d.hardware.port = suggested;
