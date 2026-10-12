@@ -12,6 +12,7 @@ import { buildEntries, buildItems, filterBase, normalize, type GroupMode } from 
 import { SensorDrawer } from './SensorDrawer';
 import { SensorTable } from './SensorTable';
 import { useLabels } from './useLabels';
+import classes from './sensors.module.css';
 
 /** Per-viewer preferences live in this browser only. */
 function useStored<T extends string | boolean>(key: string, initial: T): [T, (value: T) => void] {
@@ -169,7 +170,7 @@ export function SensorsView() {
 
         {allCategories.length > 1 && (
           <Chip.Group multiple value={categories} onChange={setCategories}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }} role="group" aria-label={t('categoriesLabel')}>
+            <div className={classes.chips} role="group" aria-label={t('categoriesLabel')}>
               {[...allCategories]
                 .sort((a, b) => labels.category(a).localeCompare(labels.category(b), locale))
                 .map((category) => (
