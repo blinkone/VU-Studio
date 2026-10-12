@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Platform-neutral part of the desktop app (VuStudio.exe): the session-channel client, the
+       user-session provider host and the pure parsers/helpers the Windows collectors use. -->
+  <PropertyGroup>
+    <RootNamespace>VuStudio.Session</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VuStudio.Core\VuStudio.Core.csproj" />
+    <ProjectReference Include="..\VuStudio.Sources\VuStudio.Sources.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="VuStudio.Tests" />
+  </ItemGroup>
+</Project>

@@ -5,6 +5,7 @@
     <Project Path="src/VuStudio.Hardware/VuStudio.Hardware.csproj" />
     <Project Path="src/VuStudio.Rendering/VuStudio.Rendering.csproj" />
     <Project Path="src/VuStudio.Server/VuStudio.Server.csproj" />
+    <Project Path="src/VuStudio.Session/VuStudio.Session.csproj" />
     <Project Path="src/VuStudio.Sources.Windows/VuStudio.Sources.Windows.csproj" />
     <Project Path="src/VuStudio.Sources/VuStudio.Sources.csproj" />
     <Project Path="src/VuStudio.Tray/VuStudio.Tray.csproj" />
