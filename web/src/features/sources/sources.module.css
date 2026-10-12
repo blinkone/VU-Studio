@@ -1,0 +1,111 @@
+/* Rounded tile holding a provider's icon. Tinted amber while the source is switched on. */
+.tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--mantine-radius-md);
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-1));
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+}
+
+.tileOn {
+  color: light-dark(var(--mantine-color-amber-8), var(--mantine-color-amber-4));
+  background: light-dark(var(--mantine-color-amber-0), alpha(var(--mantine-color-amber-5), 0.14));
+}
+
+/* "Your sources" card */
+.source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  height: 100%;
+}
+
+.source[data-off='true'] .tile {
+  opacity: 0.7;
+}
+
+.source[data-off='true'] .title {
+  color: var(--mantine-color-dimmed);
+}
+
+.id {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-xs);
+}
+
+/* Gallery card */
+.type {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  height: 100%;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.type[data-available='true']:hover {
+  border-color: var(--mantine-primary-color-filled);
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.type[data-available='false'] {
+  background: transparent;
+  border-style: dashed;
+}
+
+.type[data-available='false'] .tile,
+.type[data-available='false'] .typeText {
+  opacity: 0.55;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.groupIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--mantine-radius-sm);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+}
+
+/* The editor modal: keep the form comfortable on a phone. */
+.advancedToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+}
+
+.advancedToggle:hover {
+  color: var(--mantine-color-text);
+}
+
+.chevron {
+  transition: transform 150ms ease;
+}
+
+.chevron[data-open='true'] {
+  transform: rotate(90deg);
+}
+
+/* Buttons stay in reach while a long form scrolls inside the modal. */
+.footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: var(--mantine-spacing-xs) calc(-1 * var(--mantine-spacing-md)) calc(-1 * var(--mantine-spacing-md));
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  background: var(--mantine-color-body);
+  border-top: 1px solid var(--mantine-color-default-border);
+}

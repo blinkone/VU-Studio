@@ -1,0 +1,136 @@
+{
+  "title": "Sources",
+  "subtitle": "Connect the places VU Studio reads its data from: this PC, other devices on your network, home automation and online services. Every source adds sensors that you can show on a dial.",
+  "yours": {
+    "title": "Your sources",
+    "emptyTitle": "No sources yet",
+    "emptyBody": "Pick one from the list below. Each source adds sensors that you can then show on your dials."
+  },
+  "add": {
+    "title": "Add a source",
+    "subtitle": "Choose what you want to connect.",
+    "search": "Search source types",
+    "clearSearch": "Clear search",
+    "errorTitle": "Could not load the source types",
+    "errorBody": "VU Studio did not answer. Check that the service is running.",
+    "retry": "Try again",
+    "noMatch": "No source type matches your search.",
+    "noTypes": "This version of VU Studio has no source types."
+  },
+  "groups": {
+    "thisPc": {
+      "title": "This PC",
+      "description": "Sensors of this computer: CPU, GPU, memory, disks and network."
+    },
+    "software": {
+      "title": "Software",
+      "description": "Audio, media, games, processes and the user session."
+    },
+    "network": {
+      "title": "Network",
+      "description": "Other computers and devices on your local network."
+    },
+    "homeAutomation": {
+      "title": "Home automation",
+      "description": "Home Assistant, MQTT and smart-home devices."
+    },
+    "online": {
+      "title": "Online",
+      "description": "Weather, markets and web APIs."
+    },
+    "utility": {
+      "title": "Utilities",
+      "description": "Clock, timers, scripts, the push API and demo data."
+    }
+  },
+  "platforms": {
+    "any": "All systems",
+    "windows": "Windows",
+    "linux": "Linux",
+    "macOS": "macOS"
+  },
+  "badges": {
+    "desktop": "In the desktop app",
+    "desktopHint": "This source runs in the VU Studio desktop app (in your user session), not in the background service.",
+    "localOnly": "Local only",
+    "localOnlyHint": "Its settings can only be changed from the PC that runs VU Studio."
+  },
+  "health": {
+    "ok": "Working",
+    "starting": "Starting…",
+    "degraded": "Partly working",
+    "unavailable": "Unavailable",
+    "error": "Error",
+    "stopped": "Stopped",
+    "disabled": "Turned off",
+    "notStarted": "Not started yet"
+  },
+  "card": {
+    "enabledAria": "Turn {{name}} on or off",
+    "lockedHint": "You are using VU Studio from another device. This source can only be changed from the PC that runs it.",
+    "lockedAddHint": "This type of source can only be added from the PC that runs VU Studio.",
+    "since": "Running since {{time}}",
+    "pendingNew": "New, not saved",
+    "pendingModified": "Changed, not saved",
+    "unsupported": "Not available on this system",
+    "unknownType": "Unknown type",
+    "restarts_one": "Restarted {{count}} time",
+    "restarts_other": "Restarted {{count}} times",
+    "sensors_one": "{{count}} sensor",
+    "sensors_other": "{{count}} sensors",
+    "noSensors": "No sensors",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "viewAria": "View {{name}}",
+    "editAria": "Edit {{name}}",
+    "deleteAria": "Delete {{name}}"
+  },
+  "gallery": {
+    "unavailable": "Not available on this system",
+    "added": "Added",
+    "configured_one": "{{count}} added",
+    "configured_other": "{{count}} added",
+    "add": "Add",
+    "addAria": "Add {{name}}",
+    "editAria": "Edit {{name}}"
+  },
+  "editor": {
+    "addTitle": "Add {{name}}",
+    "editTitle": "Edit {{name}}",
+    "noSettings": "This source has no settings.",
+    "readOnly": "You are using VU Studio from another device. The settings of this source can only be changed from the PC that runs it.",
+    "nameLabel": "Name",
+    "nameHelp": "Optional. Helps you recognise it in lists, for example “Router” or “Studio”.",
+    "moreOptions": "More options ({{count}})",
+    "advanced": "Advanced",
+    "idLabel": "Identifier",
+    "idHelp": "Starts every sensor id of this source, for example “ping-2/latency”. It cannot be changed after the source is created.",
+    "idLockedEdit": "The identifier cannot be changed: dials and profiles refer to the sensors by it.",
+    "idLockedSingleton": "This type of source can only exist once, so its identifier is fixed.",
+    "idError": {
+      "empty": "Enter an identifier.",
+      "pattern": "Use lowercase letters, digits and hyphens only, starting with a letter or digit (up to 63 characters).",
+      "reserved": "This identifier is reserved.",
+      "duplicate": "A source with this identifier already exists."
+    },
+    "missing": "Still to fill in: {{fields}}",
+    "add": "Add source"
+  },
+  "delete": {
+    "title": "Delete “{{name}}”?",
+    "body": "The source “{{id}}” is removed from the configuration, and its sensors disappear from VU Studio once you save.",
+    "usageTitle": "Something still uses it",
+    "usagePages_one": "{{count}} dial page uses sensors of this source.",
+    "usagePages_other": "{{count}} dial pages use sensors of this source.",
+    "usageConditions_one": "{{count}} profile condition watches one of its sensors.",
+    "usageConditions_other": "{{count}} profile conditions watch its sensors.",
+    "usageHint": "They will have no data until you choose another sensor.",
+    "autoCreated": "VU Studio creates this source again every time it starts. To keep it off for good, turn it off instead of deleting it.",
+    "disableInstead": "Turn off instead",
+    "confirm": "Delete"
+  },
+  "notify": {
+    "added": "“{{name}}” added. Save to start it."
+  }
+}
