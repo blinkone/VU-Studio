@@ -67,6 +67,7 @@ builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.Encoder = shared.Encoder;
     o.SerializerOptions.ReadCommentHandling = shared.ReadCommentHandling;
     o.SerializerOptions.AllowTrailingCommas = true;
+    o.SerializerOptions.AllowOutOfOrderMetadataProperties = true;
     foreach (var converter in shared.Converters)
     {
         o.SerializerOptions.Converters.Add(converter);
