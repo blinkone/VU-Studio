@@ -1,0 +1,182 @@
+{
+  "title": "Profiles",
+  "subtitle": "A profile decides what each dial shows. When several profiles apply, the one with the highest priority wins.",
+  "new": "New profile",
+  "newBlank": "Blank profile",
+  "newFromCopy": "Copy of…",
+  "newName": "New profile",
+  "copySuffix": "copy",
+  "empty": "There are no profiles yet.",
+  "state": {
+    "auto": "Automatic mode: “{{name}}” is active now.",
+    "manual": "Forced manually: “{{name}}” stays active until you go back to automatic.",
+    "none": "Automatic mode: no profile is active."
+  },
+  "badges": {
+    "active": "Active now",
+    "forced": "Forced",
+    "disabled": "Disabled"
+  },
+  "activation": {
+    "always": "Always",
+    "auto": "Automatic",
+    "manual": "Manual",
+    "help": {
+      "always": "Always eligible: used whenever no higher-priority profile applies. Ideal for your everyday setup (the default profile).",
+      "auto": "Becomes active while its conditions hold. If several profiles match, the one with the highest priority wins.",
+      "manual": "Never activates by itself. Choose it from the header menu, the tray icon or the API."
+    }
+  },
+  "card": {
+    "priority": "Priority {{n}}",
+    "priorityHint": "Priority {{n}} (higher wins)",
+    "moveUp": "Raise priority",
+    "moveDown": "Lower priority",
+    "enabled": "Enable profile {{name}}",
+    "activate": "Activate now",
+    "backToAuto": "Back to automatic",
+    "saveFirst": "Save your changes first",
+    "enableFirst": "Enable the profile first",
+    "more": "More actions for {{name}}",
+    "delete": "Delete…",
+    "onlyOne": "At least one profile is required",
+    "shadowed": "It never activates on its own: “{{name}}” is always active and has a higher priority."
+  },
+  "delete": {
+    "title": "Delete this profile?",
+    "message": "“{{name}}” and the dial settings it contains will be removed. You can still discard the change before saving.",
+    "warnDefault": "This is the default profile. Dials that other profiles leave unassigned will stay idle until you mark another profile as “Always”.",
+    "confirm": "Delete"
+  },
+  "summary": {
+    "always": "Always eligible. Used when no higher-priority profile applies.",
+    "manual": "Used only when you choose it (header menu, tray icon or API).",
+    "noConditions": "No conditions yet: it will never activate on its own.",
+    "and": "and",
+    "or": "or",
+    "processRunning": "Running: {{names}}",
+    "foregroundApp": "In foreground: {{names}}",
+    "noApps": "No programs chosen",
+    "schedule": "{{days}}, {{from}}–{{to}}",
+    "noDays": "No days",
+    "everyDay": "Every day",
+    "sensor": "{{sensor}} {{comparison}} {{value}}",
+    "sensorFor": "{{sensor}} {{comparison}} {{value}} for {{seconds}} s",
+    "noSensor": "No sensor chosen"
+  },
+  "comparison": {
+    "above": "above",
+    "below": "below"
+  },
+  "errors": {
+    "activate": "Could not change the active profile"
+  },
+  "editor": {
+    "back": "All profiles",
+    "notFound": "Profile not found",
+    "notFoundHelp": "It may have been deleted, or it was created but not saved before the page was reloaded.",
+    "general": "General",
+    "name": "Name",
+    "nameRequired": "Give the profile a name",
+    "icon": "Icon",
+    "iconHelp": "Shown in the profile list.",
+    "iconPlaceholder": "Search icons…",
+    "iconUnavailable": "No icons available",
+    "iconNone": "No icon found",
+    "activation": "Activation",
+    "priority": "Priority",
+    "priorityHelp": "Higher number wins. You can also reorder from the list.",
+    "enabled": "Enabled",
+    "enabledHelp": "Disabled profiles are ignored, even when chosen manually.",
+    "conditions": "Conditions",
+    "conditionsIgnored": {
+      "always": "An “Always” profile has no conditions: it is used whenever no higher-priority profile applies.",
+      "manual": "A manual profile ignores conditions: it is used only when you choose it."
+    },
+    "dials": "Dials",
+    "dialsHelp": "What each dial shows while this profile is active.",
+    "inherit": "Use the default profile for the other dials",
+    "inheritHelp": "Dials that this profile does not configure show what “{{name}}” shows. Turn it off to let them go idle."
+  },
+  "conditions": {
+    "empty": "No conditions yet. Add one to let this profile activate automatically.",
+    "add": "Add condition",
+    "matchLabel": "Activate this profile when",
+    "match": {
+      "any": "Any condition holds",
+      "all": "All conditions hold"
+    },
+    "matchHelp": {
+      "any": "One matching condition is enough.",
+      "all": "Every condition must match at the same time."
+    },
+    "types": {
+      "processRunning": {
+        "label": "Program running",
+        "help": "A program is running in the background or foreground.",
+        "description": "Executable names without the path, such as eldenring.exe. Use * as a wildcard (steam*)."
+      },
+      "foregroundApp": {
+        "label": "Program in foreground",
+        "help": "A program owns the window you are working in.",
+        "description": "Executable names without the path. Matches only while the program’s window has the focus."
+      },
+      "schedule": {
+        "label": "Schedule",
+        "help": "Chosen days and hours.",
+        "description": ""
+      },
+      "sensor": {
+        "label": "Sensor value",
+        "help": "A sensor goes above or below a value.",
+        "description": ""
+      }
+    },
+    "programs": "Programs",
+    "programsPlaceholder": "Type a name and press Enter",
+    "programsEmpty": "Add at least one program",
+    "addForeground": "Add {{name}}",
+    "detect": "Detect a program",
+    "detecting": "Switch to the program… {{n}}",
+    "detectHelp": "Click, then switch to the program you want within 5 seconds. While you look at this page the foreground app is your browser.",
+    "detected": "Added {{name}}",
+    "detectedNone": "No foreground app was reported.",
+    "noForeground": "Foreground detection needs the VU Studio tray app (Windows)."
+  },
+  "schedule": {
+    "days": "Days",
+    "noDays": "Choose at least one day",
+    "everyDay": "Every day",
+    "weekdays": "Weekdays",
+    "weekend": "Weekend",
+    "from": "From",
+    "to": "To",
+    "same": "Start and end are the same, so this condition never matches.",
+    "wraps": "The period runs past midnight into the next day."
+  },
+  "sensor": {
+    "sensor": "Sensor",
+    "choose": "Choose a sensor",
+    "required": "Choose a sensor",
+    "when": "When the value is",
+    "value": "Value",
+    "forSeconds": "For at least",
+    "forSecondsHelp": "0 = immediately",
+    "now": "Right now: {{value}}"
+  },
+  "dials": {
+    "slot": "Dial {{slot}}",
+    "pages_one": "{{count}} page",
+    "pages_other": "{{count}} pages",
+    "noSensor": "No sensor yet",
+    "customFace": "Custom face",
+    "inherited": "Default",
+    "inheritsFrom": "Inherited from “{{name}}”",
+    "defaultProfile": "the default profile",
+    "none": "Not assigned: the dial stays idle.",
+    "noneInherit": "Not assigned here or in the default profile: the dial stays idle.",
+    "empty": "No dials known yet. Connect the hub or turn on the simulator in Settings.",
+    "edit": "Edit",
+    "assign": "Assign"
+  }
+}
