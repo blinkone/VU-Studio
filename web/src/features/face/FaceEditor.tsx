@@ -78,7 +78,7 @@ function FaceEditorInner({ slot, page, onChange }: FaceEditorProps) {
   const [tab, setTab] = useState<Tab>(doc ? 'layers' : 'theme');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [needle, setNeedle] = useState<NeedleState>({ visible: true, follow: true, value: 0.62 });
-  const [showSweep, setShowSweep] = useLocalStorage({ key: 'vustudio.face.sweepGuide', defaultValue: true });
+  const [showSweep, setShowSweep] = useLocalStorage({ key: 'vustudio.face.sweepGuide', defaultValue: false });
   const [customizing, setCustomizing] = useState(false);
   const [confirmDialog, confirm] = useConfirm();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -394,7 +394,7 @@ function FaceEditorInner({ slot, page, onChange }: FaceEditorProps) {
               <Tabs.Tab value="options" leftSection={<IconAdjustments size={16} />}>
                 {t('tabs.options')}
               </Tabs.Tab>
-              <Tabs.Tab value="layers" leftSection={<IconLayersSubtract size={16} />} rightSection={doc ? <Badge size="xs" variant="light" circle>{doc.layers.length}</Badge> : undefined}>
+              <Tabs.Tab value="layers" leftSection={<IconLayersSubtract size={16} />} rightSection={doc ? <Badge size="xs" variant="light">{doc.layers.length}</Badge> : undefined}>
                 {t('tabs.layers')}
               </Tabs.Tab>
             </Tabs.List>

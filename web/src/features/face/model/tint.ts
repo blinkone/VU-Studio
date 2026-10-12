@@ -41,7 +41,7 @@ export function litPaper(color: Rgb | null): string {
   const max = Math.max(color.r, color.g, color.b);
   if (max < 8) return PAPER_OFF;
   const scaled = { r: (color.r * 255) / max, g: (color.g * 255) / max, b: (color.b * 255) / max };
-  return toHex(mix(scaled, { r: 255, g: 255, b: 255 }, 0.18));
+  return toHex(mix(scaled, { r: 255, g: 255, b: 255 }, 0.3));
 }
 
 export function gradientAt(stops: GradientStop[], position: number): Rgb | null {

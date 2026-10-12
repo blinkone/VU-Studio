@@ -72,6 +72,7 @@ export function LayerList(props: LayerListProps) {
             data-hidden={!layer.visible || undefined}
             data-drop={drop?.id === layer.id ? drop.position : undefined}
             role="option"
+            data-layer-row
             aria-selected={selected}
             tabIndex={0}
             draggable={editing !== layer.id}

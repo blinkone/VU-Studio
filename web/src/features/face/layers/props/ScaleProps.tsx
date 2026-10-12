@@ -36,7 +36,7 @@ export function ScaleProps({ layer, patch }: LayerPropsOf<ScaleLayer>) {
         <SwitchField label={t('props.evenSpacing')} description={t('props.evenSpacingHint')} checked={layer.evenSpacing} onChange={(evenSpacing) => patch({ evenSpacing })} />
       </Section>
 
-      <Section title={t('props.labels')} action={<SwitchField label="" checked={layer.showLabels} onChange={(showLabels) => patch({ showLabels })} />}>
+      <Section title={t('props.labels')} action={<SwitchField label="" ariaLabel={t('props.labels')} checked={layer.showLabels} onChange={(showLabels) => patch({ showLabels })} />}>
         {layer.showLabels && (
           <>
             <PropGrid>
@@ -74,7 +74,7 @@ export function ScaleProps({ layer, patch }: LayerPropsOf<ScaleLayer>) {
         )}
       </Section>
 
-      <Section title={t('props.arc')} action={<SwitchField label="" checked={layer.showArc} onChange={(showArc) => patch({ showArc })} />}>
+      <Section title={t('props.arc')} action={<SwitchField label="" ariaLabel={t('props.arc')} checked={layer.showArc} onChange={(showArc) => patch({ showArc })} />}>
         {layer.showArc && (
           <PropGrid>
             <NumField

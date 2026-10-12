@@ -97,7 +97,7 @@ export function NumField({ label, axis, value, onChange, min, max, step = 1, dec
   );
 }
 
-export function SwitchField({ label, checked, onChange, description, disabled }: { label: ReactNode; checked: boolean; onChange: (v: boolean) => void; description?: ReactNode; disabled?: boolean }) {
+export function SwitchField({ label, checked, onChange, description, disabled, ariaLabel }: { label: ReactNode; checked: boolean; onChange: (v: boolean) => void; description?: ReactNode; disabled?: boolean; ariaLabel?: string }) {
   return (
     <Switch
       size="xs"
@@ -105,6 +105,7 @@ export function SwitchField({ label, checked, onChange, description, disabled }:
       description={description}
       checked={checked}
       disabled={disabled}
+      aria-label={ariaLabel}
       onChange={(e) => onChange(e.currentTarget.checked)}
       styles={{ label: { fontSize: 'var(--mantine-font-size-sm)' }, body: { alignItems: 'center' } }}
     />

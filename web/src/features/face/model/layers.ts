@@ -5,7 +5,7 @@ import {
   IconIcons,
   IconLetterT,
   IconPhoto,
-  IconProgress,
+  IconChartBar,
   IconShape,
   type IconProps,
 } from '@tabler/icons-react';
@@ -34,21 +34,22 @@ export const LAYER_ICONS: Record<LayerType, ComponentType<IconProps>> = {
   icon: IconIcons,
   scale: IconGauge,
   shape: IconShape,
-  bar: IconProgress,
+  bar: IconChartBar,
   sparkline: IconChartLine,
   image: IconPhoto,
 };
 
 const base = () => ({ id: newId(), name: undefined, visible: true, ink: 'foreground' as const });
 
+// The service's JSON reader needs the "type" discriminator to come first, so it leads every literal.
 // New layers start from the service's defaults (src/VuStudio.Core/Faces/FaceDocument.cs). Every property
 // is listed, including the nullable ones (undefined = null on the service), so the editor always works
 // on complete objects.
 
 export function defaultText(text: string): TextLayer {
   return {
-    ...base(),
     type: 'text',
+    ...base(),
     x: 100,
     y: 30,
     text,
@@ -68,7 +69,7 @@ export function defaultText(text: string): TextLayer {
 }
 
 export function defaultIcon(): IconLayer {
-  return { ...base(), type: 'icon', x: 100, y: 30, size: 24, icon: '{icon}' };
+  return { type: 'icon', ...base(), x: 100, y: 30, size: 24, icon: '{icon}' };
 }
 
 export function defaultZone(radius = 152): ScaleZone {
@@ -77,8 +78,8 @@ export function defaultZone(radius = 152): ScaleZone {
 
 export function defaultScale(): ScaleLayer {
   return {
-    ...base(),
     type: 'scale',
+    ...base(),
     radius: 152,
     majorLength: 14,
     minorLength: 6,
@@ -106,8 +107,8 @@ export function defaultScale(): ScaleLayer {
 
 export function defaultImage(): ImageLayer {
   return {
-    ...base(),
     type: 'image',
+    ...base(),
     assetId: '',
     x: 0,
     y: 0,
@@ -125,8 +126,8 @@ export function defaultImage(): ImageLayer {
 export function defaultShape(): ShapeLayer {
   // Centred in the top band, which the needle never crosses.
   return {
-    ...base(),
     type: 'shape',
+    ...base(),
     kind: 'rectangle',
     x: 80,
     y: 20,
@@ -146,8 +147,8 @@ export function defaultShape(): ShapeLayer {
 
 export function defaultBar(): BarLayer {
   return {
-    ...base(),
     type: 'bar',
+    ...base(),
     x: 20,
     y: 120,
     width: 160,
@@ -164,8 +165,8 @@ export function defaultBar(): BarLayer {
 
 export function defaultSparkline(): SparklineLayer {
   return {
-    ...base(),
     type: 'sparkline',
+    ...base(),
     x: 20,
     y: 96,
     width: 160,
