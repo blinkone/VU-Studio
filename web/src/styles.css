@@ -1,0 +1,13 @@
+:root {
+  --vs-panel: light-dark(#ffffff, #16181d);
+  --vs-canvas: light-dark(#f4f4f6, #0f1014);
+}
+
+body {
+  background: var(--vs-canvas);
+}
+
+/* Crisp upscaling of the 1-bit e-paper previews. */
+img.pixelated {
+  image-rendering: pixelated;
+}

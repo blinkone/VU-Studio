@@ -1,0 +1,91 @@
+{
+  "appName": "VU Studio",
+  "nav": {
+    "dashboard": "Dials",
+    "profiles": "Profiles",
+    "sources": "Sources",
+    "sensors": "Sensors",
+    "history": "History",
+    "settings": "Settings"
+  },
+  "actions": {
+    "save": "Save",
+    "saving": "Saving…",
+    "discard": "Discard",
+    "cancel": "Cancel",
+    "add": "Add",
+    "remove": "Remove",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "close": "Close",
+    "apply": "Apply",
+    "reset": "Reset",
+    "search": "Search",
+    "back": "Back"
+  },
+  "status": {
+    "connected": "Connected",
+    "connecting": "Connecting…",
+    "disconnected": "Disconnected",
+    "error": "Error",
+    "simulated": "Simulator",
+    "liveLost": "Connection to VU Studio lost — reconnecting…"
+  },
+  "unsaved": {
+    "title": "Unsaved changes",
+    "message": "You have changes that are not saved yet.",
+    "conflict": "The configuration was changed elsewhere. Reload to see the latest version."
+  },
+  "hub": {
+    "title": "Hub",
+    "noHub": "No VU1 hub found",
+    "port": "Port {{port}}"
+  },
+  "profile": {
+    "active": "Active profile",
+    "auto": "Automatic",
+    "paused": "Paused"
+  },
+  "night": {
+    "none": "Normal",
+    "dim": "Dimmed",
+    "lightsOff": "Lights off",
+    "sleep": "Sleeping"
+  },
+  "language": {
+    "label": "Language",
+    "auto": "Automatic",
+    "en": "English",
+    "it": "Italiano"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "auto": "System"
+  },
+  "categories": {
+    "cpu": "CPU",
+    "gpu": "GPU",
+    "memory": "Memory",
+    "storage": "Storage",
+    "network": "Network",
+    "cooling": "Cooling",
+    "power": "Power",
+    "battery": "Battery",
+    "motherboard": "Motherboard",
+    "audio": "Audio",
+    "media": "Media",
+    "game": "Games",
+    "process": "Processes",
+    "time": "Time",
+    "weather": "Weather",
+    "finance": "Finance",
+    "home": "Home",
+    "system": "System",
+    "custom": "Custom"
+  },
+  "slot": "Dial {{slot}}",
+  "empty": "Nothing here yet",
+  "loading": "Loading…",
+  "errorTitle": "Something went wrong"
+}

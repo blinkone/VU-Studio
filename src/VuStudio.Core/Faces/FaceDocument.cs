@@ -383,6 +383,8 @@ public sealed class FaceConfig
     public bool ShowSparkline { get; set; }
 
     /// <summary>Start of the warning zone as a dial fraction; null = no zone.</summary>
+    /// <remarks>Always serialized (also when null) so that "no zone" survives a round trip through the UI.</remarks>
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public double? WarnFrom { get; set; } = 0.85;
 
     public int LabelCount { get; set; } = 5;
