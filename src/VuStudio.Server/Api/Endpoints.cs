@@ -13,6 +13,7 @@ using VuStudio.Core.Sensors;
 using VuStudio.Server.Hosting;
 using VuStudio.Server.Live;
 using VuStudio.Server.Security;
+using VuStudio.Sources.Push;
 
 namespace VuStudio.Server.Api;
 
@@ -39,9 +40,6 @@ public sealed record PushRequest(List<PushItem>? Sensors);
 /// <summary>Maps every <c>/api</c> endpoint (see docs/api.md).</summary>
 public static partial class Endpoints
 {
-    [GeneratedRegex("^[a-z0-9][a-z0-9/_.-]{0,127}$")]
-    private static partial Regex PushId();
-
     public static void MapVuStudioApi(this WebApplication app)
     {
         var api = app.MapGroup("/api");
@@ -366,7 +364,7 @@ public static partial class Endpoints
 
     private static void MapPush(RouteGroupBuilder api)
     {
-        api.MapPost("/push", (HttpContext http, PushRequest request, ConfigStore config, SensorHub hub) =>
+        api.MapPost("/push", (HttpContext http, PushRequest request, ConfigStore config, PushGateway gateway) =>
         {
             var expected = config.Current.Web.ApiToken;
             var header = http.Request.Headers.Authorization.ToString();
@@ -377,40 +375,19 @@ public static partial class Endpoints
                 return Results.Unauthorized();
             }
 
-            var sink = hub.CreateSink("push");
             var errors = new List<string>();
             foreach (var item in request.Sensors ?? [])
             {
-                if (string.IsNullOrWhiteSpace(item.Id) || !PushId().IsMatch(item.Id))
+                try
                 {
-                    errors.Add($"Invalid id '{item.Id}'.");
-                    continue;
+                    var meta = item.Name is null && item.Unit is null && item.Category is null && item.Min is null && item.Max is null && item.Icon is null
+                        ? null
+                        : new PushSensorMeta(item.Name, item.Unit, item.Category, item.Min, item.Max, item.Icon);
+                    gateway.Push(item.Id ?? "", item.Value, item.Text, meta);
                 }
-
-                if (item.Name is not null || item.Unit is not null || item.Category is not null || item.Min is not null || item.Max is not null || item.Icon is not null ||
-                    hub.Get("push/" + item.Id) is null)
+                catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
                 {
-                    sink.Define(new SensorInfo
-                    {
-                        Id = item.Id,
-                        Name = item.Name ?? item.Id,
-                        Unit = item.Unit ?? "",
-                        Category = item.Category ?? SensorCategory.Custom,
-                        Min = item.Min,
-                        Max = item.Max,
-                        Icon = item.Icon,
-                        ValueKind = item.Value is null && item.Text is not null ? SensorValueKind.Text : SensorValueKind.Number,
-                        StaleAfterSeconds = 60 * 60,
-                    });
-                }
-
-                if (item.Value is { } value)
-                {
-                    sink.Publish(item.Id, value);
-                }
-                else if (item.Text is not null)
-                {
-                    sink.PublishText(item.Id, item.Text);
+                    errors.Add($"{item.Id}: {ex.Message}");
                 }
             }
 

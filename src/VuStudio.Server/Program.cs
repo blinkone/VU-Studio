@@ -80,6 +80,7 @@ services.AddSingleton(paths);
 services.AddSingleton(configStore);
 services.AddHttpClient();
 services.AddSingleton<SensorHub>();
+services.AddSingleton(_ => new VuStudio.Sources.Push.PushGateway());
 
 var providerAssemblies = new[] { "VuStudio.Sources", "VuStudio.Sources.Windows" }
     .Select(name =>
