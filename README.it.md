@@ -22,6 +22,8 @@ VU Studio sostituisce il VU-Server ufficiale con un'unica applicazione che:
 * offre **profili automatici**, rotazione delle pagine, grafici storici e modalità notte/standby;
 * gira come servizio Windows con icona nel tray e un pannello web opzionale per telefono o altri PC.
 
+![Temi e-ink inclusi](docs/images/themes.png)
+
 ## Documentazione (in inglese)
 
 * [Requisiti](docs/requirements.md)
