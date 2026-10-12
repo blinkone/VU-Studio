@@ -1,0 +1,487 @@
+/* A VU1 dial: dark housing, recessed e-paper window lit by the RGBW backlight, analog needle. */
+
+/* Registered so the backlight color can be transitioned smoothly. */
+@property --dial-paper {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #303236;
+}
+
+@property --dial-glow {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(0, 0, 0, 0);
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.root[data-size='sm'] {
+  max-width: 15rem;
+  gap: var(--mantine-spacing-xs);
+}
+
+.root[data-size='md'] {
+  max-width: 21rem;
+}
+
+.root[data-size='lg'] {
+  max-width: 28rem;
+}
+
+/* ------------------------------------------------------------------ info rows */
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-xs);
+  min-width: 0;
+}
+
+.slotLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--mantine-font-size-xs);
+  line-height: 1.2;
+}
+
+.slotNumber {
+  flex: none;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mantine-color-dimmed);
+}
+
+.slotName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--mantine-color-text);
+}
+
+.status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+  white-space: nowrap;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
+}
+
+.status[data-online] .statusDot {
+  background: var(--mantine-color-teal-5);
+  box-shadow: 0 0 0 3px light-dark(rgba(18, 184, 134, 0.18), rgba(56, 217, 169, 0.16));
+}
+
+.status[data-alarm] {
+  color: var(--mantine-color-red-6);
+  font-weight: 700;
+}
+
+.status[data-alarm] .statusDot {
+  background: var(--mantine-color-red-6);
+  box-shadow: 0 0 0 3px rgba(250, 82, 82, 0.25);
+  animation: dotPulse 1.1s ease-in-out infinite;
+}
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.reading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  min-width: 0;
+}
+
+.title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-text);
+}
+
+.value {
+  flex: none;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-text);
+}
+
+.root[data-size='sm'] .value {
+  font-size: var(--mantine-font-size-lg);
+}
+
+.root[data-size='lg'] .value {
+  font-size: 1.75rem;
+}
+
+.unit {
+  margin-inline-start: 0.2em;
+  font-size: 0.6em;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--mantine-color-dimmed);
+}
+
+.value[data-muted] {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--mantine-color-dimmed);
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  min-width: 0;
+  min-height: 14px;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--mantine-color-dimmed);
+  opacity: 0.4;
+  transition:
+    width 250ms ease,
+    opacity 250ms ease,
+    background-color 250ms ease;
+}
+
+.dot[data-active] {
+  width: 16px;
+  opacity: 1;
+  background: var(--mantine-primary-color-filled);
+}
+
+.pageName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-dimmed);
+}
+
+/* ------------------------------------------------------------------ the dial */
+
+.stage {
+  position: relative;
+  transition:
+    --dial-paper 320ms ease,
+    --dial-glow 320ms ease;
+}
+
+/* Light spilling onto the surface behind the dial. */
+.ambient {
+  position: absolute;
+  inset: 4% 6% 22%;
+  border-radius: 50%;
+  background: var(--dial-glow);
+  filter: blur(34px);
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+:where([data-mantine-color-scheme='light']) .ambient {
+  opacity: 0.3;
+}
+
+.dial {
+  position: relative;
+  container-type: inline-size;
+}
+
+.housing {
+  position: relative;
+  padding: 6.5cqw 6.5cqw 14cqw;
+  border-radius: 7cqw;
+  background:
+    radial-gradient(130% 80% at 50% -10%, rgba(255, 255, 255, 0.09), transparent 60%),
+    linear-gradient(180deg, #2c2e34 0%, #1e2024 46%, #151619 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    0 1cqw 2.5cqw rgba(0, 0, 0, 0.35),
+    0 7cqw 12cqw -5cqw rgba(0, 0, 0, 0.6);
+}
+
+:where([data-mantine-color-scheme='light']) .housing {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
+    0 1cqw 2cqw rgba(16, 18, 24, 0.18),
+    0 8cqw 14cqw -6cqw rgba(16, 18, 24, 0.45);
+}
+
+/* Fine brushed texture on the lower bezel. */
+.housing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+.window {
+  position: relative;
+  aspect-ratio: 200 / 144;
+  border-radius: 1.8cqw;
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+  box-shadow:
+    0 0 0 0.8cqw #0b0c0e,
+    0 0 0 calc(0.8cqw + 1px) rgba(255, 255, 255, 0.07),
+    0 0 9cqw 1.2cqw color-mix(in srgb, var(--dial-glow) 45%, transparent);
+}
+
+.paper {
+  position: absolute;
+  inset: 0;
+  background: var(--dial-paper);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.faceIn {
+  animation: faceIn 450ms ease both;
+}
+
+.faceOut {
+  animation: faceOut 450ms ease both;
+}
+
+/* Paper is brighter in the middle, like an edge-lit panel seen through glass. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(135% 115% at 50% 32%, transparent 52%, rgba(0, 0, 0, 0.3) 100%);
+  mix-blend-mode: multiply;
+}
+
+.needle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.glass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    158deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    rgba(255, 255, 255, 0) 30.5%
+  );
+  box-shadow:
+    inset 0 0.9cqw 1.8cqw rgba(0, 0, 0, 0.5),
+    inset 0 0 0 0.3cqw rgba(0, 0, 0, 0.55);
+}
+
+.chin {
+  position: absolute;
+  inset-inline: 7.5cqw;
+  bottom: 0;
+  height: 14cqw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.engraving {
+  font-size: 3.2cqw;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.2);
+  text-shadow:
+    0 -1px 0 rgba(0, 0, 0, 0.75),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  font-variant-numeric: tabular-nums;
+}
+
+.led {
+  width: 2.2cqw;
+  height: 2.2cqw;
+  min-width: 4px;
+  min-height: 4px;
+  border-radius: 50%;
+  background: #3b3d43;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.7),
+    0 1px 0 rgba(255, 255, 255, 0.06);
+  transition:
+    background-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.led[data-online] {
+  background: #3ddc97;
+  box-shadow:
+    0 0 1.6cqw 0.2cqw rgba(61, 220, 151, 0.75),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.led[data-alarm] {
+  background: #ff5c5c;
+  box-shadow: 0 0 2cqw 0.3cqw rgba(255, 92, 92, 0.8);
+  animation: dotPulse 1.1s ease-in-out infinite;
+}
+
+.alarm {
+  position: absolute;
+  inset: -1.3cqw;
+  border-radius: 8.2cqw;
+  border: 0.9cqw solid var(--mantine-color-red-6);
+  box-shadow:
+    0 0 5cqw rgba(250, 82, 82, 0.55),
+    inset 0 0 3cqw rgba(250, 82, 82, 0.35);
+  pointer-events: none;
+  animation: alarmPulse 1.1s ease-in-out infinite;
+}
+
+/* Clickable dial (dashboard): focus ring and hover lift. */
+.link {
+  display: block;
+  border-radius: 7cqw;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+  transition: transform 200ms ease;
+}
+
+.link:hover {
+  transform: translateY(-2px);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 4px;
+}
+
+@keyframes faceIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes faceOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes alarmPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    transition: none;
+  }
+
+  .faceIn,
+  .faceOut,
+  .alarm,
+  .led[data-alarm],
+  .status[data-alarm] .statusDot {
+    animation: none;
+  }
+
+  .link:hover {
+    transform: none;
+  }
+}

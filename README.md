@@ -17,6 +17,8 @@ VU Studio replaces the official VU-Server with a single application that:
 * adds **automatic profiles**, page rotation, history charts and night/standby behaviour,
 * runs as a Windows service with a tray app, plus an optional web panel for your phone or other PCs.
 
+![Built-in e-ink themes](docs/images/themes.png)
+
 ## Documentation
 
 * [Requirements](docs/requirements.md)

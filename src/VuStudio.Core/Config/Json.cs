@@ -21,6 +21,7 @@ public static class Json
             AllowTrailingCommas = true,
             NumberHandling = JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.AllowNamedFloatingPointLiterals,
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            AllowOutOfOrderMetadataProperties = true,
         };
         options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: true));
         return options;

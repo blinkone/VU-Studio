@@ -6,6 +6,8 @@ using VuStudio.Core.Faces;
 using VuStudio.Core.History;
 using VuStudio.Core.Providers;
 using VuStudio.Core.Sensors;
+using VuStudio.Hardware;
+using VuStudio.Rendering;
 using VuStudio.Server;
 using VuStudio.Server.Api;
 using VuStudio.Server.Hosting;
@@ -65,6 +67,7 @@ builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.Encoder = shared.Encoder;
     o.SerializerOptions.ReadCommentHandling = shared.ReadCommentHandling;
     o.SerializerOptions.AllowTrailingCommas = true;
+    o.SerializerOptions.AllowOutOfOrderMetadataProperties = true;
     foreach (var converter in shared.Converters)
     {
         o.SerializerOptions.Converters.Add(converter);
@@ -78,6 +81,7 @@ services.AddSingleton(paths);
 services.AddSingleton(configStore);
 services.AddHttpClient();
 services.AddSingleton<SensorHub>();
+services.AddSingleton(_ => new VuStudio.Sources.Push.PushGateway());
 
 var providerAssemblies = new[] { "VuStudio.Sources", "VuStudio.Sources.Windows" }
     .Select(name =>
@@ -103,8 +107,9 @@ services.AddSingleton<SqliteHistoryStore>(_ => new SqliteHistoryStore(paths.Hist
 services.AddSingleton<IHistoryPersistence>(sp => sp.GetRequiredService<SqliteHistoryStore>());
 services.AddSingleton<HistoryRecorder>();
 services.AddSingleton<IAssetStore>(_ => new FileAssetStore(paths.Assets));
-services.AddSingleton<IFaceRenderer, PlaceholderRenderer>();
-services.AddSingleton<IHardwareHost, OfflineHardwareHost>();
+services.AddSingleton<IFaceRenderer>(sp => new FaceRenderer(sp.GetRequiredService<IAssetStore>()));
+services.AddSingleton(sp => new DialController(new DialControllerOptions(), sp.GetRequiredService<ILogger<DialController>>()));
+services.AddSingleton<IHardwareHost, DialControllerHost>();
 services.AddSingleton<IDialOutput>(sp => sp.GetRequiredService<IHardwareHost>().Output);
 services.AddSingleton<NotificationHub>();
 services.AddSingleton<INotificationSink>(sp => sp.GetRequiredService<NotificationHub>());

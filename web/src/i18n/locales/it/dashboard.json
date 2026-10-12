@@ -1,0 +1,67 @@
+{
+  "title": "I tuoi dial",
+  "subtitle": "Cosa mostra in questo momento ogni dial. Aprine uno per cambiarne dati, quadrante e luce.",
+  "profile": {
+    "label": "Profilo attivo",
+    "automatic": "automatico",
+    "manual": "scelto a mano",
+    "none": "Nessun profilo attivo"
+  },
+  "night": {
+    "dim": "Modalità notte · luci attenuate",
+    "lightsOff": "Modalità notte · luci spente",
+    "sleep": "Modalità notte · a riposo"
+  },
+  "paused": "In pausa",
+  "hub": {
+    "connected": "Hub su {{port}}",
+    "connectedNoPort": "Hub collegato",
+    "simulated": "Simulatore",
+    "connecting": "Ricerca dell'hub…",
+    "disconnected": "Nessun hub collegato",
+    "error": "Errore dell'hub",
+    "dialsOnline_one": "{{online}} dial su {{count}} collegato",
+    "dialsOnline_other": "{{online}} dial su {{count}} collegati"
+  },
+  "dial": {
+    "online": "Collegato",
+    "offline": "Scollegato",
+    "alarm": "Allarme",
+    "unassigned": "Non assegnato",
+    "noValue": "Nessun dato",
+    "lightOff": "luce spenta",
+    "page": "Pagina {{index}} di {{count}}",
+    "aria": "Dial {{slot}}: {{title}}, {{value}}, {{light}}"
+  },
+  "actions": {
+    "previous": "Pagina precedente",
+    "next": "Pagina successiva",
+    "identify": "Identifica",
+    "identifyHint": "Fai lampeggiare questo dial per riconoscerlo",
+    "identifyOffline": "Il dial deve essere collegato per lampeggiare",
+    "identifySent": "Il dial {{slot}} sta lampeggiando",
+    "edit": "Modifica",
+    "editDial": "Modifica il dial {{slot}}",
+    "failed": "Il servizio non ha accettato il comando"
+  },
+  "offline": {
+    "title": "Nessun hub VU1 collegato",
+    "titleError": "L'hub VU1 non risponde",
+    "titleConnecting": "Ricerca dell'hub VU1…",
+    "intro": "I dial qui sotto mostrano cosa visualizzerebbe VU Studio. Per far funzionare quelli veri:",
+    "step1": "Collega l'hub VU1 a una porta USB: VU Studio lo trova da solo.",
+    "step2": "Chiudi il VU-Server ufficiale e ogni altra app che comunica con l'hub: la porta seriale può usarla un solo programma alla volta.",
+    "step3": "Non hai l'hardware a portata di mano? Avvia il servizio con <code>{{flag}}</code> per provare VU Studio con quattro dial simulati.",
+    "details": "Dettagli: {{message}}",
+    "showSteps": "Come collegare i dial",
+    "hideSteps": "Nascondi i passaggi"
+  },
+  "empty": {
+    "title": "Ancora nessun dial da mostrare",
+    "text": "Collega l'hub VU1 oppure assegna qualcosa da mostrare a un dial nella pagina Profili."
+  },
+  "lost": {
+    "title": "Impossibile raggiungere il servizio VU Studio",
+    "text": "Assicurati che il servizio sia in esecuzione: la pagina si ricollega da sola appena torna disponibile."
+  }
+}

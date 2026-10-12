@@ -1,0 +1,67 @@
+{
+  "title": "Your dials",
+  "subtitle": "What each dial is showing right now. Open one to change its data, face and light.",
+  "profile": {
+    "label": "Active profile",
+    "automatic": "automatic",
+    "manual": "chosen manually",
+    "none": "No active profile"
+  },
+  "night": {
+    "dim": "Night mode · dimmed",
+    "lightsOff": "Night mode · lights off",
+    "sleep": "Night mode · sleeping"
+  },
+  "paused": "Paused",
+  "hub": {
+    "connected": "Hub on {{port}}",
+    "connectedNoPort": "Hub connected",
+    "simulated": "Simulator",
+    "connecting": "Looking for the hub…",
+    "disconnected": "No hub connected",
+    "error": "Hub error",
+    "dialsOnline_one": "{{online}} of {{count}} dial online",
+    "dialsOnline_other": "{{online}} of {{count}} dials online"
+  },
+  "dial": {
+    "online": "Online",
+    "offline": "Offline",
+    "alarm": "Alarm",
+    "unassigned": "Not assigned",
+    "noValue": "No data",
+    "lightOff": "light off",
+    "page": "Page {{index}} of {{count}}",
+    "aria": "Dial {{slot}}: {{title}}, {{value}}, {{light}}"
+  },
+  "actions": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "identify": "Identify",
+    "identifyHint": "Make this dial blink so you can spot it",
+    "identifyOffline": "The dial must be online to blink",
+    "identifySent": "Dial {{slot}} is blinking",
+    "edit": "Edit",
+    "editDial": "Edit dial {{slot}}",
+    "failed": "The service didn't accept the command"
+  },
+  "offline": {
+    "title": "No VU1 hub connected",
+    "titleError": "The VU1 hub isn't responding",
+    "titleConnecting": "Looking for the VU1 hub…",
+    "intro": "The dials below show what VU Studio would display. To bring the real ones to life:",
+    "step1": "Plug the VU1 hub into a USB port: VU Studio finds it on its own.",
+    "step2": "Close the official VU-Server and any other app that talks to the hub: only one program at a time can use its serial port.",
+    "step3": "No hardware at hand? Start the service with <code>{{flag}}</code> to try VU Studio with four simulated dials.",
+    "details": "Details: {{message}}",
+    "showSteps": "How to connect the dials",
+    "hideSteps": "Hide the steps"
+  },
+  "empty": {
+    "title": "No dials to show yet",
+    "text": "Connect the VU1 hub, or give a dial something to show in the Profiles page."
+  },
+  "lost": {
+    "title": "Can't reach the VU Studio service",
+    "text": "Make sure the service is running. This page reconnects by itself as soon as it's back."
+  }
+}

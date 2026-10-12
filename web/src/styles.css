@@ -1,6 +1,13 @@
 :root {
-  --vs-panel: light-dark(#ffffff, #16181d);
-  --vs-canvas: light-dark(#f4f4f6, #0f1014);
+  --vs-panel: #ffffff;
+  --vs-canvas: #f4f4f6;
+}
+
+/* postcss-preset-mantine rewrites light-dark() inside :root into a selector that never matches,
+   so the dark values are set explicitly for Mantine's dark color scheme. */
+:root[data-mantine-color-scheme='dark'] {
+  --vs-panel: #16181d;
+  --vs-canvas: #0f1014;
 }
 
 body {
