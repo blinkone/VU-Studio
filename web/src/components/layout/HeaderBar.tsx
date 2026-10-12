@@ -10,7 +10,7 @@ export function HeaderBar() {
   const { t, i18n } = useTranslation();
   const state = useLive((s) => s.state);
   const status = useLive((s) => s.status);
-  const profiles = useConfigDraft((s) => s.base?.profiles ?? []);
+  const profiles = useConfigDraft((s) => s.base?.profiles) ?? [];
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   const hub = state?.hub;
