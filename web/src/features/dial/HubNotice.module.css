@@ -1,0 +1,66 @@
+.notice {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(90% 140% at 0% 0%, light-dark(rgba(255, 171, 15, 0.1), rgba(255, 177, 31, 0.08)), transparent 60%),
+    var(--vs-panel);
+}
+
+.notice[data-state='error'] {
+  background:
+    radial-gradient(90% 140% at 0% 0%, rgba(250, 82, 82, 0.1), transparent 60%),
+    var(--vs-panel);
+}
+
+.badge {
+  flex: none;
+}
+
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-gray-0), rgba(255, 255, 255, 0.025));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
+
+.stepNumber {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  border-radius: 50%;
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-amber-9), var(--mantine-color-amber-3));
+  background: light-dark(var(--mantine-color-amber-1), rgba(255, 177, 31, 0.14));
+}
+
+.stepText {
+  min-width: 0;
+  line-height: 1.5;
+}
+
+.code {
+  white-space: nowrap;
+  font-size: 0.85em;
+}
+
+.chevron {
+  transition: transform 200ms ease;
+}
+
+.chevron[data-open] {
+  transform: rotate(180deg);
+}
