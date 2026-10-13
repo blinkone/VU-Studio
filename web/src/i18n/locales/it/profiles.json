@@ -1,0 +1,182 @@
+{
+  "title": "Profili",
+  "subtitle": "Un profilo decide cosa mostra ogni dial. Quando se ne applicano più di uno, vince quello con la priorità più alta.",
+  "new": "Nuovo profilo",
+  "newBlank": "Profilo vuoto",
+  "newFromCopy": "Copia di…",
+  "newName": "Nuovo profilo",
+  "copySuffix": "copia",
+  "empty": "Non ci sono ancora profili.",
+  "state": {
+    "auto": "Modalità automatica: ora è attivo «{{name}}».",
+    "manual": "Forzato a mano: «{{name}}» resta attivo finché non torni all’automatico.",
+    "none": "Modalità automatica: nessun profilo attivo."
+  },
+  "badges": {
+    "active": "Attivo ora",
+    "forced": "Forzato",
+    "disabled": "Disattivato"
+  },
+  "activation": {
+    "always": "Sempre",
+    "auto": "Automatico",
+    "manual": "Manuale",
+    "help": {
+      "always": "Sempre idoneo: viene usato quando nessun profilo con priorità più alta si applica. Ideale per la configurazione di tutti i giorni (il profilo predefinito).",
+      "auto": "Si attiva finché le sue condizioni sono vere. Se ne corrispondono più di uno, vince quello con la priorità più alta.",
+      "manual": "Non si attiva mai da solo. Sceglilo dal menu in alto, dall’icona nella barra di sistema o dall’API."
+    }
+  },
+  "card": {
+    "priority": "Priorità {{n}}",
+    "priorityHint": "Priorità {{n}} (vince la più alta)",
+    "moveUp": "Alza la priorità",
+    "moveDown": "Abbassa la priorità",
+    "enabled": "Attiva il profilo {{name}}",
+    "activate": "Attiva ora",
+    "backToAuto": "Torna all’automatico",
+    "saveFirst": "Salva prima le modifiche",
+    "enableFirst": "Attiva prima il profilo",
+    "more": "Altre azioni per {{name}}",
+    "delete": "Elimina…",
+    "onlyOne": "Serve almeno un profilo",
+    "shadowed": "Non si attiva mai da solo: «{{name}}» è sempre attivo e ha una priorità più alta."
+  },
+  "delete": {
+    "title": "Eliminare questo profilo?",
+    "message": "«{{name}}» e le impostazioni dei dial che contiene verranno rimossi. Puoi ancora annullare la modifica prima di salvare.",
+    "warnDefault": "È il profilo predefinito. I dial che gli altri profili lasciano non assegnati resteranno inattivi finché non imposti un altro profilo su «Sempre».",
+    "confirm": "Elimina"
+  },
+  "summary": {
+    "always": "Sempre idoneo. Usato quando nessun profilo con priorità più alta si applica.",
+    "manual": "Usato solo quando lo scegli tu (menu in alto, icona nella barra di sistema o API).",
+    "noConditions": "Ancora nessuna condizione: non si attiverà mai da solo.",
+    "and": "e",
+    "or": "oppure",
+    "processRunning": "In esecuzione: {{names}}",
+    "foregroundApp": "In primo piano: {{names}}",
+    "noApps": "Nessun programma scelto",
+    "schedule": "{{days}}, {{from}}–{{to}}",
+    "noDays": "Nessun giorno",
+    "everyDay": "Ogni giorno",
+    "sensor": "{{sensor}} {{comparison}} {{value}}",
+    "sensorFor": "{{sensor}} {{comparison}} {{value}} per {{seconds}} s",
+    "noSensor": "Nessun sensore scelto"
+  },
+  "comparison": {
+    "above": "sopra",
+    "below": "sotto"
+  },
+  "errors": {
+    "activate": "Impossibile cambiare il profilo attivo"
+  },
+  "editor": {
+    "back": "Tutti i profili",
+    "notFound": "Profilo non trovato",
+    "notFoundHelp": "Potrebbe essere stato eliminato, oppure è stato creato ma non salvato prima di ricaricare la pagina.",
+    "general": "Generale",
+    "name": "Nome",
+    "nameRequired": "Dai un nome al profilo",
+    "icon": "Icona",
+    "iconHelp": "Appare nell’elenco dei profili.",
+    "iconPlaceholder": "Cerca un’icona…",
+    "iconUnavailable": "Nessuna icona disponibile",
+    "iconNone": "Nessuna icona trovata",
+    "activation": "Attivazione",
+    "priority": "Priorità",
+    "priorityHelp": "Vince il numero più alto. Puoi anche riordinare dall’elenco.",
+    "enabled": "Attivo",
+    "enabledHelp": "I profili disattivati vengono ignorati, anche se scelti a mano.",
+    "conditions": "Condizioni",
+    "conditionsIgnored": {
+      "always": "Un profilo «Sempre» non ha condizioni: viene usato quando nessun profilo con priorità più alta si applica.",
+      "manual": "Un profilo manuale ignora le condizioni: viene usato solo quando lo scegli tu."
+    },
+    "dials": "Dial",
+    "dialsHelp": "Cosa mostra ogni dial mentre questo profilo è attivo.",
+    "inherit": "Usa il profilo predefinito per gli altri dial",
+    "inheritHelp": "I dial che questo profilo non configura mostrano ciò che mostra «{{name}}». Disattiva l’opzione per lasciarli inattivi."
+  },
+  "conditions": {
+    "empty": "Ancora nessuna condizione. Aggiungine una per far attivare questo profilo in automatico.",
+    "add": "Aggiungi condizione",
+    "matchLabel": "Attiva questo profilo quando",
+    "match": {
+      "any": "Basta una condizione",
+      "all": "Valgono tutte"
+    },
+    "matchHelp": {
+      "any": "Basta che una condizione sia vera.",
+      "all": "Tutte le condizioni devono essere vere insieme."
+    },
+    "types": {
+      "processRunning": {
+        "label": "Programma in esecuzione",
+        "help": "Un programma è in esecuzione, in primo piano o in background.",
+        "description": "Nomi degli eseguibili senza percorso, per esempio eldenring.exe. Usa * come jolly (steam*)."
+      },
+      "foregroundApp": {
+        "label": "Programma in primo piano",
+        "help": "Un programma ha la finestra su cui stai lavorando.",
+        "description": "Nomi degli eseguibili senza percorso. Vale solo mentre la finestra del programma ha il focus."
+      },
+      "schedule": {
+        "label": "Orario",
+        "help": "Giorni e ore a scelta.",
+        "description": ""
+      },
+      "sensor": {
+        "label": "Valore di un sensore",
+        "help": "Un sensore supera o scende sotto un valore.",
+        "description": ""
+      }
+    },
+    "programs": "Programmi",
+    "programsPlaceholder": "Scrivi un nome e premi Invio",
+    "programsEmpty": "Aggiungi almeno un programma",
+    "addForeground": "Aggiungi {{name}}",
+    "detect": "Rileva un programma",
+    "detecting": "Passa al programma… {{n}}",
+    "detectHelp": "Clicca, poi passa al programma che vuoi entro 5 secondi. Mentre guardi questa pagina, il programma in primo piano è il tuo browser.",
+    "detected": "Aggiunto {{name}}",
+    "detectedNone": "Nessun programma in primo piano rilevato.",
+    "noForeground": "Il rilevamento del programma in primo piano richiede l’app nella barra di sistema di VU Studio (Windows)."
+  },
+  "schedule": {
+    "days": "Giorni",
+    "noDays": "Scegli almeno un giorno",
+    "everyDay": "Ogni giorno",
+    "weekdays": "Giorni lavorativi",
+    "weekend": "Fine settimana",
+    "from": "Dalle",
+    "to": "Alle",
+    "same": "Inizio e fine coincidono, quindi questa condizione non è mai vera.",
+    "wraps": "Il periodo supera la mezzanotte e prosegue nel giorno dopo."
+  },
+  "sensor": {
+    "sensor": "Sensore",
+    "choose": "Scegli un sensore",
+    "required": "Scegli un sensore",
+    "when": "Quando il valore è",
+    "value": "Valore",
+    "forSeconds": "Per almeno",
+    "forSecondsHelp": "0 = subito",
+    "now": "In questo momento: {{value}}"
+  },
+  "dials": {
+    "slot": "Dial {{slot}}",
+    "pages_one": "{{count}} pagina",
+    "pages_other": "{{count}} pagine",
+    "noSensor": "Ancora nessun sensore",
+    "customFace": "Quadrante personalizzato",
+    "inherited": "Predefinito",
+    "inheritsFrom": "Ereditato da «{{name}}»",
+    "defaultProfile": "il profilo predefinito",
+    "none": "Non assegnato: il dial resta inattivo.",
+    "noneInherit": "Non assegnato qui né nel profilo predefinito: il dial resta inattivo.",
+    "empty": "Ancora nessun dial noto. Collega l’hub o attiva il simulatore nelle Impostazioni.",
+    "edit": "Modifica",
+    "assign": "Assegna"
+  }
+}

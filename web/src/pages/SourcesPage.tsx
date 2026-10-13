@@ -1,6 +1,6 @@
-import { Title } from '@mantine/core';
+import { SourcesView } from '@/features/sources/SourcesView';
 
-// Placeholder — implemented by a feature agent.
+/** /sources — the sources the user has connected, and the catalog of types they can add. */
 export function SourcesPage() {
-  return <Title order={2}>SourcesPage</Title>;
+  return <SourcesView />;
 }

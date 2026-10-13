@@ -1,0 +1,113 @@
+{
+  "title": "Sensori",
+  "subtitle": "Tutto ciò che VU Studio può mostrare su un dial, con i valori in tempo reale. Clicca un sensore per vederne i dettagli e l’andamento recente.",
+  "notLive": "Aggiornamento live in pausa",
+  "search": {
+    "label": "Cerca sensori",
+    "placeholder": "Cerca per nome, dispositivo, tipo o id…",
+    "clear": "Cancella la ricerca"
+  },
+  "group": {
+    "label": "Raggruppa i sensori per",
+    "device": "Dispositivo",
+    "category": "Categoria",
+    "collapseAll": "Comprimi tutti i gruppi",
+    "expandAll": "Espandi tutti i gruppi"
+  },
+  "hideStale": "Nascondi non aggiornati",
+  "categoriesLabel": "Filtra per categoria",
+  "provider": {
+    "only": "Fonte: {{name}}",
+    "clear": "Mostra i sensori di tutte le fonti"
+  },
+  "providers": {
+    "session": "Sessione desktop",
+    "push": "API push"
+  },
+  "error": {
+    "title": "Impossibile caricare i sensori",
+    "body": "VU Studio non ha risposto. Controlla che il servizio sia in esecuzione.",
+    "retry": "Riprova"
+  },
+  "empty": {
+    "title": "Ancora nessun sensore",
+    "waiting": "Le tue fonti non hanno ancora segnalato sensori. Compariranno qui appena arrivano i dati.",
+    "noSources": "I sensori arrivano dalle fonti. Collegane una per vedere cosa può mostrare VU Studio.",
+    "goToSources": "Vai alle Fonti"
+  },
+  "noMatch": {
+    "title": "Nessun sensore corrisponde",
+    "body": "Prova con altre parole oppure togli qualche filtro.",
+    "reset": "Azzera i filtri"
+  },
+  "count_one": "{{count}} sensore",
+  "count_other": "{{count}} sensori",
+  "showingOf": "{{shown}} sensori su {{total}}",
+  "table": { "label": "Sensori" },
+  "columns": {
+    "name": "Sensore",
+    "value": "Valore",
+    "unit": "Unità",
+    "kind": "Tipo",
+    "range": "Intervallo suggerito",
+    "provider": "Fonte",
+    "state": "Stato"
+  },
+  "state": { "live": "Attivo", "stale": "Non aggiornato" },
+  "valueKinds": { "number": "Numero", "text": "Testo", "color": "Colore" },
+  "kinds": {
+    "load": "Carico",
+    "temperature": "Temperatura",
+    "clock": "Frequenza",
+    "power": "Potenza",
+    "voltage": "Tensione",
+    "current": "Corrente",
+    "energy": "Energia",
+    "fan": "Ventola",
+    "flow": "Portata",
+    "level": "Livello",
+    "data": "Dati",
+    "throughput": "Velocità di trasferimento",
+    "fps": "Fotogrammi al secondo",
+    "frametime": "Tempo di fotogramma",
+    "latency": "Latenza",
+    "percent": "Percentuale",
+    "duration": "Durata",
+    "count": "Conteggio",
+    "humidity": "Umidità",
+    "speed": "Velocità",
+    "price": "Prezzo",
+    "state": "Stato",
+    "text": "Testo",
+    "color": "Colore"
+  },
+  "drawer": {
+    "close": "Chiudi i dettagli",
+    "staleHint": "Questo sensore non si aggiorna da un po’, quindi il valore potrebbe essere superato.",
+    "chartTitle": "Ultimi 10 minuti",
+    "loading": "Caricamento…",
+    "noHistory": "Ancora nessun campione. La registrazione di questo sensore è appena partita: il grafico si riempie ogni pochi secondi.",
+    "noChart": "Solo i sensori numerici hanno un andamento.",
+    "recordingNote": "Aprire questo pannello avvia la registrazione del sensore. Lo storico viene conservato per i sensori usati sui dial o aperti qui.",
+    "copyId": "Copia l’id",
+    "copied": "Copiato"
+  },
+  "facts": {
+    "id": "Id del sensore",
+    "device": "Dispositivo",
+    "category": "Categoria",
+    "kind": "Tipo",
+    "unit": "Unità",
+    "valueKind": "Tipo di valore",
+    "range": "Intervallo suggerito",
+    "provider": "Fonte",
+    "updated": "Ultimo aggiornamento"
+  },
+  "use": {
+    "title": "Usalo su un dial",
+    "dial": "Apri Dial, scegli un dial e seleziona questo sensore come origine dei dati.",
+    "text": "Nel testo di un quadrante puoi mostrarlo anche con questo segnaposto:",
+    "copyPlaceholder": "Copia il segnaposto",
+    "openHistory": "Apri nello Storico"
+  }
+}

@@ -1,0 +1,100 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 34px;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: 999px;
+  background: var(--mantine-color-body);
+}
+
+.chip[data-warn='true'] {
+  border-style: dashed;
+}
+
+.keyLine {
+  flex: none;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* Stat tiles lay out their four numbers by the tile's own width, not the window's. */
+.tile {
+  container-type: inline-size;
+  height: 100%;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+}
+
+@container (min-width: 300px) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.stat dt {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--mantine-color-dimmed);
+}
+
+.stat dd {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat[data-main='true'] dd {
+  font-weight: 700;
+}
+
+.tableWrap {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--mantine-color-body);
+  white-space: nowrap;
+}
+
+.table td {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.range {
+  color: var(--mantine-color-dimmed);
+}
+
+.suggestion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: 999px;
+  background: var(--mantine-color-body);
+  font-size: var(--mantine-font-size-sm);
+  cursor: pointer;
+}
+
+.suggestion:hover {
+  border-color: var(--mantine-primary-color-filled);
+}

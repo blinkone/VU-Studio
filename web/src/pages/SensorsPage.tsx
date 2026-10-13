@@ -1,6 +1,6 @@
-import { Title } from '@mantine/core';
+import { SensorsView } from '@/features/sensors/SensorsView';
 
-// Placeholder — implemented by a feature agent.
+/** /sensors — every sensor VU Studio can show, with live values. */
 export function SensorsPage() {
-  return <Title order={2}>SensorsPage</Title>;
+  return <SensorsView />;
 }

@@ -1,0 +1,113 @@
+{
+  "title": "Sensors",
+  "subtitle": "Everything VU Studio can show on a dial, with live values. Click a sensor for its details and recent trend.",
+  "notLive": "Live updates paused",
+  "search": {
+    "label": "Search sensors",
+    "placeholder": "Search by name, device, kind or id…",
+    "clear": "Clear search"
+  },
+  "group": {
+    "label": "Group sensors by",
+    "device": "Device",
+    "category": "Category",
+    "collapseAll": "Collapse all groups",
+    "expandAll": "Expand all groups"
+  },
+  "hideStale": "Hide stale",
+  "categoriesLabel": "Filter by category",
+  "provider": {
+    "only": "Source: {{name}}",
+    "clear": "Show sensors of all sources"
+  },
+  "providers": {
+    "session": "Desktop session",
+    "push": "Push API"
+  },
+  "error": {
+    "title": "Could not load the sensors",
+    "body": "VU Studio did not answer. Check that the service is running.",
+    "retry": "Try again"
+  },
+  "empty": {
+    "title": "No sensors yet",
+    "waiting": "Your sources have not reported any sensor yet. They appear here as soon as the data arrives.",
+    "noSources": "Sensors come from sources. Connect one to see what VU Studio can show.",
+    "goToSources": "Go to Sources"
+  },
+  "noMatch": {
+    "title": "No sensor matches",
+    "body": "Try other words, or remove some filters.",
+    "reset": "Clear filters"
+  },
+  "count_one": "{{count}} sensor",
+  "count_other": "{{count}} sensors",
+  "showingOf": "Showing {{shown}} of {{total}} sensors",
+  "table": { "label": "Sensors" },
+  "columns": {
+    "name": "Sensor",
+    "value": "Value",
+    "unit": "Unit",
+    "kind": "Kind",
+    "range": "Suggested range",
+    "provider": "Source",
+    "state": "State"
+  },
+  "state": { "live": "Live", "stale": "Stale" },
+  "valueKinds": { "number": "Number", "text": "Text", "color": "Color" },
+  "kinds": {
+    "load": "Load",
+    "temperature": "Temperature",
+    "clock": "Clock speed",
+    "power": "Power",
+    "voltage": "Voltage",
+    "current": "Current",
+    "energy": "Energy",
+    "fan": "Fan",
+    "flow": "Flow",
+    "level": "Level",
+    "data": "Data",
+    "throughput": "Throughput",
+    "fps": "Frame rate",
+    "frametime": "Frame time",
+    "latency": "Latency",
+    "percent": "Percent",
+    "duration": "Duration",
+    "count": "Count",
+    "humidity": "Humidity",
+    "speed": "Speed",
+    "price": "Price",
+    "state": "State",
+    "text": "Text",
+    "color": "Color"
+  },
+  "drawer": {
+    "close": "Close details",
+    "staleHint": "This sensor has not reported for a while, so the value may be out of date.",
+    "chartTitle": "Last 10 minutes",
+    "loading": "Loading…",
+    "noHistory": "No samples yet. Recording just started for this sensor; the chart fills in every few seconds.",
+    "noChart": "Only numeric sensors have a trend.",
+    "recordingNote": "Opening this panel starts recording the sensor. History is kept for sensors used on dials or opened here.",
+    "copyId": "Copy the id",
+    "copied": "Copied"
+  },
+  "facts": {
+    "id": "Sensor id",
+    "device": "Device",
+    "category": "Category",
+    "kind": "Kind",
+    "unit": "Unit",
+    "valueKind": "Type of value",
+    "range": "Suggested range",
+    "provider": "Source",
+    "updated": "Last update"
+  },
+  "use": {
+    "title": "Use it on a dial",
+    "dial": "Open Dials, choose a dial and pick this sensor as its data source.",
+    "text": "In a face text you can also show it with this placeholder:",
+    "copyPlaceholder": "Copy the placeholder",
+    "openHistory": "Open in History"
+  }
+}
