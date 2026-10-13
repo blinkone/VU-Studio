@@ -23,7 +23,8 @@ builder.Services.AddSingleton<IProviderFactory, SystemProviderFactory>();
 builder.Services.AddSingleton<IProviderFactory, UnraidProviderFactory>();
 builder.Services.AddSingleton<ProviderManager>();
 builder.Services.AddHostedService<SensorHost>();
-if (options.Mdns)
+// A loopback-only agent is unreachable from the LAN, so announcing it would only mislead the service.
+if (options.Mdns && !AgentSecurity.IsLoopbackBind(options.Bind))
 {
     builder.Services.AddHostedService<MdnsAdvertiser>();
 }
