@@ -52,6 +52,9 @@ internal abstract class NetworkPollingProvider : ISensorProvider
 
     protected int ConsecutiveFailures => _failures;
 
+    /// <summary>For providers whose <see cref="PollAsync"/> is a long-lived session: call once a session is established so the back-off starts over.</summary>
+    protected void ResetFailures() => _failures = 0;
+
     protected SensorRegistry Registry => _registry ?? throw new InvalidOperationException("The provider is not running.");
 
     protected IProviderStatus Status => _status ?? throw new InvalidOperationException("The provider is not running.");
