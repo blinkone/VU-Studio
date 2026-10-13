@@ -126,8 +126,9 @@ Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#TrayExe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#TrayExe}"; Tasks: desktopicon
 
 [Registry]
-; Tray app starts at logon for every user. The value is removed again on uninstall.
-Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "{#AppName}"; ValueData: """{app}\{#TrayExe}"""; Flags: uninsdeletevalue
+; Tray app starts at logon for every user, in the notification area only (--background: no window).
+; The value is removed again on uninstall.
+Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "{#AppName}"; ValueData: """{app}\{#TrayExe}"" --background"; Flags: uninsdeletevalue
 
 [Run]
 ; runasoriginaluser: start the tray as the signed-in user, not elevated. It runs the user's

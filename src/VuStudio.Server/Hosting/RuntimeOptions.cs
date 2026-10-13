@@ -7,10 +7,12 @@ namespace VuStudio.Server.Hosting;
 /// <c>--service</c> (run as a Windows service),
 /// <c>--simulate N</c> (use a simulated hub with N dials, not saved to the config),
 /// <c>--data-dir PATH</c>, <c>--port N</c>.
+/// Without <c>--port</c>, the <c>VUSTUDIO_PORT</c> environment variable is used (the tray resolves the port the same way);
+/// without either, <see cref="Port"/> is <c>null</c> and <c>web.port</c> of the configuration applies.
 /// </summary>
 public sealed record RuntimeOptions(bool IsService, int Simulate, string? DataDirectory, int? Port)
 {
-    public static RuntimeOptions Parse(string[] args)
+    public static RuntimeOptions Parse(string[] args, Func<string, string?>? environment = null)
     {
         var service = false;
         var simulate = 0;
@@ -35,13 +37,19 @@ public sealed record RuntimeOptions(bool IsService, int Simulate, string? DataDi
                     dataDir = Next();
                     break;
                 case "--port":
-                    port = int.TryParse(Next(), NumberStyles.None, CultureInfo.InvariantCulture, out var p) ? p : null;
+                    port = ParsePort(Next());
                     break;
             }
         }
 
+        environment ??= Environment.GetEnvironmentVariable;
+        port ??= ParsePort(environment("VUSTUDIO_PORT"));
+
         return new RuntimeOptions(service, simulate, dataDir, port);
     }
+
+    private static int? ParsePort(string? text) =>
+        int.TryParse(text?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var p) && p is > 0 and <= 65535 ? p : null;
 
     private static (string Name, string? Inline) Split(string arg)
     {

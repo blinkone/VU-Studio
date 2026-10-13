@@ -136,6 +136,7 @@ app.UseMiddleware<SecurityMiddleware>();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapVuStudioApi();
+app.MapUnknownApi();
 
 var index = Path.Combine(app.Environment.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot"), "index.html");
 if (File.Exists(index))

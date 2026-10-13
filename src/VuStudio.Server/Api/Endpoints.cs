@@ -94,6 +94,13 @@ public static partial class Endpoints
         });
     }
 
+    /// <summary>
+    /// Unknown <c>/api/…</c> paths answer 404 instead of falling through to the SPA's <c>index.html</c> with 200.
+    /// Call before <c>MapFallbackToFile</c>; the catch-all has a lower precedence than every real API route.
+    /// </summary>
+    public static void MapUnknownApi(this IEndpointRouteBuilder app) =>
+        app.Map("/api/{**rest}", () => Results.NotFound(new { error = "Unknown API endpoint." }));
+
     private static void MapConfig(RouteGroupBuilder api)
     {
         api.MapGet("/config", (ConfigService service) => service.GetMasked());
