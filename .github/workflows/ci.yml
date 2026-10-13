@@ -1,0 +1,168 @@
+name: CI
+
+# Every push to a branch and every pull request: build + test on Linux and Windows,
+# plus the web UI once web/package.json exists. Tags are handled by release.yml.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer run for the same ref supersedes the one in progress.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  # Deterministic builds that do not embed the runner's source paths.
+  ContinuousIntegrationBuild: "true"
+
+jobs:
+  linux:
+    name: Build and test (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'Directory.Packages.props', 'global.json') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore VuStudio.slnx
+
+      # The whole solution, including the Windows-only Tray: EnableWindowsTargeting
+      # (Directory.Build.props) lets Linux compile net10.0-windows projects.
+      - name: Build (Release)
+        run: dotnet build VuStudio.slnx -c Release --no-restore
+
+      # Microsoft.Testing.Platform + xUnit v3: reporters are flags of `dotnet test`
+      # itself, and xUnit's own writer produces the TRX file.
+      - name: Test
+        run: >
+          dotnet test --project tests/VuStudio.Tests -c Release --no-build
+          --results-directory "${{ runner.temp }}/test-results"
+          --report-xunit-trx --report-xunit-trx-filename linux.trx
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-linux
+          path: ${{ runner.temp }}/test-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+  windows:
+    name: Build and test (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'Directory.Packages.props', 'global.json') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore VuStudio.slnx
+
+      # Full solution, natively this time: VuStudio.Tray (WinForms + WebView2) included.
+      - name: Build (Release)
+        run: dotnet build VuStudio.slnx -c Release --no-restore
+
+      - name: Test
+        run: >
+          dotnet test --project tests/VuStudio.Tests -c Release --no-build
+          --results-directory "${{ runner.temp }}/test-results"
+          --report-xunit-trx --report-xunit-trx-filename windows.trx
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-windows
+          path: ${{ runner.temp }}/test-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+  web:
+    name: Web UI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # hashFiles() is only available inside steps, not in a job-level `if`, so the
+      # job always starts and every step after this one is skipped while web/ is absent.
+      - name: Detect web UI
+        id: web
+        shell: bash
+        run: |
+          if [ "${{ hashFiles('web/package.json') != '' }}" = "true" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Web UI::web/package.json not found, skipping the web steps."
+          fi
+
+      - name: Set up Node.js
+        if: steps.web.outputs.present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        if: steps.web.outputs.present == 'true'
+        working-directory: web
+        run: npm ci
+
+      - name: Lint
+        if: steps.web.outputs.present == 'true'
+        working-directory: web
+        run: npm run lint --if-present
+
+      - name: Type-check
+        if: steps.web.outputs.present == 'true'
+        working-directory: web
+        run: npm run typecheck --if-present
+
+      # Output goes to src/VuStudio.Server/wwwroot/ (gitignored).
+      - name: Build
+        if: steps.web.outputs.present == 'true'
+        working-directory: web
+        run: npm run build

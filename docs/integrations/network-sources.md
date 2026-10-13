@@ -924,7 +924,7 @@ Per source: URL (placeholders for secrets), method, headers, interval (min 5 s, 
 
 ## 11. mDNS / DNS-SD discovery of VU Studio agents on the LAN
 
-Goal: agents advertise `_vustudio-agent._tcp` and the desktop app/service browses for them; manual "add by IP:port" must always remain possible (mDNS is blocked on many guest/IoT VLANs and by some Wi-Fi extenders; Docker bridge networks do not forward it, so the Unraid container needs `--net=host`). Service name rules (RFC 6763 section 7.2): at most 15 characters after the underscore, letters/digits/hyphens: `vustudio-agent` is 14, valid.
+Goal: agents advertise `_vustudio._tcp` and the desktop app/service browses for them; manual "add by IP:port" must always remain possible (mDNS is blocked on many guest/IoT VLANs and by some Wi-Fi extenders; Docker bridge networks do not forward it, so the Unraid container needs `--net=host`). Service name rules (RFC 6763 section 7.2): at most 15 characters after the underscore, letters/digits/hyphens: `vustudio` is 8, valid; agents add the TXT record `role=agent`.
 
 ### 11.1 Library comparison (NuGet metadata read 2026-10-12; tested on .NET 10.0.112)
 
@@ -932,7 +932,7 @@ Goal: agents advertise `_vustudio-agent._tcp` and the desktop app/service browse
 |---|---|---|---|---|---|
 | **Makaretu.Dns.Multicast.New** ([jdomnitz/net-mdns](https://github.com/jdomnitz/net-mdns)) | 0.38.0 on 2024-11-23; last commit 2025-05-16 | MIT | **yes** (`ServiceDiscovery.Advertise/Announce/Unadvertise`) | yes (`QueryServiceInstances`, `ServiceInstanceDiscovered`) | Maintained fork of Richard Schneider's lib; targets net8.0/net9.0/netstandard2.0 (works on net10 through the compatible assets: **compiled and ran here**); IPv4+IPv6, multi-NIC, detects NIC changes; depends on `Common.Logging` 3.4.1 and `Makaretu.Dns.New` 3.1.2. README warns the DNS-SD *client* has no flood protection |
 | Makaretu.Dns.Multicast (original, [richardschneider/net-mdns](https://github.com/richardschneider/net-mdns)) | 0.27.0 on **2019-11-05** | MIT (repo) | yes | yes | Stale; avoid |
-| **Zeroconf** ([novotnyllc/Zeroconf](https://github.com/novotnyllc/Zeroconf)) | 3.7.16 on 2024-12-17; repo touched 2026-08 | MIT | **no** (browse only) | yes (`ZeroconfResolver.ResolveAsync("_vustudio-agent._tcp.local.", TimeSpan)`, `ListenForAnnouncementsAsync`) | net8.0/net6.0/netstandard2.0, depends on System.Reactive 5.0.0; fine as a *client-only* option |
+| **Zeroconf** ([novotnyllc/Zeroconf](https://github.com/novotnyllc/Zeroconf)) | 3.7.16 on 2024-12-17; repo touched 2026-08 | MIT | **no** (browse only) | yes (`ZeroconfResolver.ResolveAsync("_vustudio._tcp.local.", TimeSpan)`, `ListenForAnnouncementsAsync`) | net8.0/net6.0/netstandard2.0, depends on System.Reactive 5.0.0; fine as a *client-only* option |
 | **Tmds.MDns** ([tmds/Tmds.MDns](https://github.com/tmds/Tmds.MDns)) | 0.10.1 on 2026-09-28 (very active) | MIT | no (finds services only) | yes (`ServiceBrowser`, events `ServiceAdded/Removed/Changed`) | net8.0/netstandard2.0, no dependencies; explicitly not a full RFC 6762 querier/cache |
 | TinyDNS ([SmartHomeOS/TinyDNS](https://github.com/SmartHomeOS/TinyDNS)) | 0.9.0 on 2024-09-01 | **AGPL-3.0-or-later** | no | yes, with flood control | licence adds network-use obligations; skip |
 
@@ -940,19 +940,19 @@ Tested API sketch (Makaretu.Dns.Multicast.New 0.38.0, `Nullable` disabled, outpu
 
 ```csharp
 using Makaretu.Dns;
-var profile = new ServiceProfile("vustudio-agent-nas", "_vustudio-agent._tcp", 8741);   // instance name, service type, port
+var profile = new ServiceProfile("vustudio-agent-nas", "_vustudio._tcp", 8741);   // instance name, service type, port
 profile.AddProperty("ver", "1"); profile.AddProperty("os", "linux"); profile.AddProperty("id", "<stable guid>");   // TXT; the lib prepends txtvers=1
 using var sd = new ServiceDiscovery();
 sd.Advertise(profile); sd.Announce(profile);              // answers queries + gratuitous announcement; sd.Unadvertise(profile) sends the goodbye on shutdown
 
 sd.ServiceInstanceDiscovered += (s, e) =>                 // browsing side (QueryServiceInstances sends the PTR query)
 {
-    string instance = e.ServiceInstanceName.ToString();   // "vustudio-agent-nas._vustudio-agent._tcp.local"
+    string instance = e.ServiceInstanceName.ToString();   // "vustudio-agent-nas._vustudio._tcp.local"
     var srv = e.Message.AdditionalRecords.OfType<SRVRecord>().FirstOrDefault();      // srv.Target, srv.Port
     var ips = e.Message.AdditionalRecords.OfType<AddressRecord>().Select(a => a.Address);
     var txt = e.Message.AdditionalRecords.OfType<TXTRecord>().SelectMany(t => t.Strings);   // "txtvers=1","ver=1","os=linux","id=..."
 };
-sd.QueryServiceInstances("_vustudio-agent._tcp");         // repeat every 30-60 s; responses can also arrive unsolicited when an agent announces
+sd.QueryServiceInstances("_vustudio._tcp");         // repeat every 30-60 s; responses can also arrive unsolicited when an agent announces
 ```
 
 The default SRV target in that test was `<instance>.vustudio-agent.local`, which does not resolve through the OS resolver: **use the `AddressRecord` addresses (or the packet's source IP) instead of resolving the SRV target name**, and prefer an IPv4 address on the same subnet as the NIC that received the packet. Answers may be partial (SRV without A in a different packet): keep a per-instance cache and issue explicit follow-up queries if addresses are missing.
@@ -965,7 +965,7 @@ The default SRV target in that test was `<instance>.vustudio-agent.local`, which
 
 ### 11.3 Plan B: minimal custom implementation (about 300 lines)
 
-Needed only if the libraries disappoint. Facts (RFC 6762/6763/1035): UDP **224.0.0.251:5353** (IPv4) and `ff02::fb`; open one socket per usable IPv4 NIC (`SO_REUSEADDR`, `IP_MULTICAST_TTL`=255, `JoinMulticastGroup` on that NIC's address, `MulticastLoopback` on; skip loopback, down, virtual/Hyper-V/VPN adapters), accept packets from on-link sources only. Message = 12-byte DNS header (id 0, flags `0x8400` = response + authoritative for answers; queries flags 0) + sections, names as length-prefixed labels, compression pointers `0xC0xx` allowed. Records for instance `NAS._vustudio-agent._tcp.local`: `PTR _vustudio-agent._tcp.local -> NAS._vustudio-agent._tcp.local` (TTL 4500), `SRV` (priority 0, weight 0, port 8741, target `nas.local`; TTL 120), `TXT` (strings `key=value`, each at most 255 bytes, start with `txtvers=1`; TTL 4500), `A nas.local -> 192.168.1.20` (TTL 120); unique records (SRV/TXT/A) set the cache-flush bit (class `0x8001`). Behaviours: answer PTR queries for the service type (and ANY/SRV/TXT/A queries for the instance/host) by multicast with PTR+SRV+TXT+A in the same packet (additional records), honour the QU bit (unicast response), announce twice 1 s apart after start, send TTL=0 goodbye on exit, optionally probe the instance name (3 ANY queries 250 ms apart) and append `-2` on conflict. Browsing: send a PTR query (QU bit set on the first), collect responses for 3 s, follow up for missing SRV/TXT/A, deduplicate by instance name, expire by TTL, query again every 60 s with a known-answer list to be polite. Keep the whole module behind `IAgentDiscovery` so it is swappable.
+Needed only if the libraries disappoint. Facts (RFC 6762/6763/1035): UDP **224.0.0.251:5353** (IPv4) and `ff02::fb`; open one socket per usable IPv4 NIC (`SO_REUSEADDR`, `IP_MULTICAST_TTL`=255, `JoinMulticastGroup` on that NIC's address, `MulticastLoopback` on; skip loopback, down, virtual/Hyper-V/VPN adapters), accept packets from on-link sources only. Message = 12-byte DNS header (id 0, flags `0x8400` = response + authoritative for answers; queries flags 0) + sections, names as length-prefixed labels, compression pointers `0xC0xx` allowed. Records for instance `NAS._vustudio._tcp.local`: `PTR _vustudio._tcp.local -> NAS._vustudio._tcp.local` (TTL 4500), `SRV` (priority 0, weight 0, port 8741, target `nas.local`; TTL 120), `TXT` (strings `key=value`, each at most 255 bytes, start with `txtvers=1`; TTL 4500), `A nas.local -> 192.168.1.20` (TTL 120); unique records (SRV/TXT/A) set the cache-flush bit (class `0x8001`). Behaviours: answer PTR queries for the service type (and ANY/SRV/TXT/A queries for the instance/host) by multicast with PTR+SRV+TXT+A in the same packet (additional records), honour the QU bit (unicast response), announce twice 1 s apart after start, send TTL=0 goodbye on exit, optionally probe the instance name (3 ANY queries 250 ms apart) and append `-2` on conflict. Browsing: send a PTR query (QU bit set on the first), collect responses for 3 s, follow up for missing SRV/TXT/A, deduplicate by instance name, expire by TTL, query again every 60 s with a known-answer list to be polite. Keep the whole module behind `IAgentDiscovery` so it is swappable.
 
 ## 12. Recommendations
 

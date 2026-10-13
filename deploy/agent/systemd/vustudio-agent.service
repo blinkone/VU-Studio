@@ -1,0 +1,24 @@
+# Generic Linux system service. See deploy/agent/README.md.
+#   sudo install -d /opt/vustudio-agent && sudo cp -r publish/* /opt/vustudio-agent/
+#   sudo install -m 600 vustudio-agent.env.example /etc/vustudio-agent.env   (then edit the token)
+#   sudo cp vustudio-agent.service /etc/systemd/system/ && sudo systemctl enable --now vustudio-agent
+[Unit]
+Description=VU Studio agent
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/vustudio-agent/vustudio-agent --port 5342
+EnvironmentFile=-/etc/vustudio-agent.env
+Restart=always
+RestartSec=5
+DynamicUser=yes
+# The agent only reads /proc and /sys.
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target
