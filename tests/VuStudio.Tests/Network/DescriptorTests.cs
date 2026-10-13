@@ -20,6 +20,8 @@ public class NetworkDescriptorTests
         ["upnp-wan"] = ProviderGroup.Network,
         ["weather"] = ProviderGroup.Online,
         ["crypto"] = ProviderGroup.Online,
+        ["mqtt"] = ProviderGroup.HomeAutomation,
+        ["homeassistant"] = ProviderGroup.HomeAutomation,
     };
 
     public static TheoryData<string> Types()
@@ -51,7 +53,10 @@ public class NetworkDescriptorTests
         Assert.False(d.Singleton);
         Assert.False(d.AutoCreate);
         Assert.Equal(PlatformSupport.Any, d.Platforms);
-        Assert.Contains(d.Settings, s => s.Key == "interval");
+        if (type != "mqtt")
+        {
+            Assert.Contains(d.Settings, s => s.Key == "interval"); // MQTT is event driven
+        }
     }
 
     [Theory]
@@ -80,6 +85,7 @@ public class NetworkDescriptorTests
         Assert.Equal("test-" + type, provider.Id);
         var settings = new ProviderSettings(new JsonObject(), factory.Descriptor);
         Assert.True(settings.GetSeconds("interval", 60) > TimeSpan.Zero);
+        Assert.NotEmpty(factory.Descriptor.Settings);
         await provider.DisposeAsync();
     }
 
