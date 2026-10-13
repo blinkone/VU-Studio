@@ -107,6 +107,12 @@ public static class NavigationPolicy
     /// <summary>True for <c>http://127.0.0.1|localhost|[::1]:{port}/…</c> of the service.</summary>
     public static bool IsAppUri(Uri? uri, Uri appBase)
     {
+        if (uri is { IsAbsoluteUri: true, Scheme: "blob" })
+        {
+            // blob:http://127.0.0.1:5341/<guid>: object URLs created by the UI itself (CSV export).
+            return Uri.TryCreate(uri.AbsolutePath, UriKind.Absolute, out var inner) && inner.Scheme != "blob" && IsAppUri(inner, appBase);
+        }
+
         if (uri is null || !uri.IsAbsoluteUri || uri.Scheme != Uri.UriSchemeHttp || uri.Port != appBase.Port)
         {
             return false;

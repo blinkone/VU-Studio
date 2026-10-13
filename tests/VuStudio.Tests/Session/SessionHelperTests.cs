@@ -231,6 +231,8 @@ public sealed class ServiceLocatorTests : IDisposable
     [InlineData("http://evil.example:5341/", false)]
     [InlineData("http://127.0.0.1.nip.io:5341/", false)]
     [InlineData("file:///C:/Windows/win.ini", false)]
+    [InlineData("blob:http://127.0.0.1:5341/3f2a9c1e-0000-4000-8000-000000000000", true)]
+    [InlineData("blob:https://evil.example/3f2a9c1e", false)]
     public void Navigation_is_restricted_to_the_local_service(string url, bool allowed) =>
         Assert.Equal(allowed, NavigationPolicy.IsAppUri(new Uri(url), ServiceLocator.AppUri(5341)));
 
