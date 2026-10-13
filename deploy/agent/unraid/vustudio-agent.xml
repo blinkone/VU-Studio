@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>vustudio-agent</Name>
-  <Repository>ghcr.io/OWNER/vustudio-agent:latest</Repository>
-  <Registry>https://github.com/OWNER/vudials/pkgs/container/vustudio-agent</Registry>
+  <Repository>ghcr.io/blinkone/vustudio-agent:latest</Repository>
+  <Registry>https://github.com/blinkone/VuDials/pkgs/container/vustudio-agent</Registry>
   <Network>host</Network>
   <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/OWNER/vudials/issues</Support>
-  <Project>https://github.com/OWNER/vudials</Project>
+  <Support>https://github.com/blinkone/VuDials/issues</Support>
+  <Project>https://github.com/blinkone/VuDials</Project>
   <Overview>Exposes this Unraid server's sensors (CPU, memory, temperatures, disks, network, array state, parity check and disk temperatures) to VU Studio, which shows them on Streacom VU1 dials. Uses host networking so network rates and mDNS discovery work. Set an access token and enter the same token in VU Studio.</Overview>
   <Category>Tools:System</Category>
   <WebUI>http://[IP]:[PORT:5342]/api/v1/info</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/OWNER/vudials/main/deploy/agent/unraid/vustudio-agent.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/OWNER/vudials/main/deploy/agent/unraid/icon.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/blinkone/VuDials/main/deploy/agent/unraid/vustudio-agent.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/blinkone/VuDials/main/deploy/agent/unraid/icon.png</Icon>
   <ExtraParams>--read-only --tmpfs /tmp</ExtraParams>
   <PostArgs/>
   <CPUset/>

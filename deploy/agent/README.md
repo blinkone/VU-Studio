@@ -90,7 +90,7 @@ Mount the `emhttp` directory, not single files: emhttpd rewrites them. No `--pri
 
 ## Unraid
 
-Copy `deploy/agent/unraid/vustudio-agent.xml` to `/boot/config/plugins/dockerMan/templates-user/` on the server (or submit it to Community Applications), then add the container from the Docker tab. Replace `OWNER` in the template with the account that publishes the image. The template uses host networking, the two mounts above and read-only root filesystem.
+Copy `deploy/agent/unraid/vustudio-agent.xml` to `/boot/config/plugins/dockerMan/templates-user/` on the server (or submit it to Community Applications), then add the container from the Docker tab. The template uses host networking, the two mounts above and read-only root filesystem.
 
 ## Steam Deck
 
