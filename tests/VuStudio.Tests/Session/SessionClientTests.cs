@@ -179,6 +179,9 @@ public class SessionClientTests
         await using var host = await TestHost.StartAsync(server.Map, port: port);
         await Wait.UntilAsync(() => server.LatestValues("session").ContainsKey("idle"), because: "late connection");
         Assert.Equal(3, server.LatestValues("session")["idle"].GetDouble());
+
+        // Disconnect before the host stops, or Kestrel waits for the open socket until its shutdown timeout.
+        await client.StopAsync();
     }
 
     [Fact]
