@@ -1,26 +1,53 @@
 # VU Studio
 
-**Configura i tuoi dial Streacom VU1 in pochi minuti: mostra dati hardware, di rete o software con quadranti e-ink personalizzati e luci RGBW.**
+**Un'app open source per configurare i dial Streacom VU1: mostra dati hardware, di rete o software con quadranti e-ink personalizzati e luci RGBW.**
 
 🇬🇧 [Read in English](README.md)
 
-> Stato: **pre-release**. Tutti i moduli sono completi e testati su Linux con un simulatore di dial; il prossimo passo è il collaudo su hardware Windows reale. Vedi la [roadmap](docs/roadmap.md).
+![Dashboard di VU Studio con quattro dial](docs/images/screenshots/dashboard.png)
 
-VU Studio sostituisce il VU-Server ufficiale con un'unica applicazione che:
+> **Stato: alpha iniziale.** Gran parte di VU Studio è stata provata con un simulatore di dial e con test automatici. Il collaudo su hardware Windows reale è appena iniziato. Aspettati qualche imperfezione e [segnala quello che trovi](https://github.com/blinkone/VU-Studio/issues). Vedi la [roadmap](docs/roadmap.md).
 
-* parla **direttamente con l'hub VU1**, senza server separati né API key;
-* legge **questo PC**: CPU, GPU, RAM, dischi, rete, ventole e consumi tramite LibreHardwareMonitor, più HWiNFO quando è aperto;
-* legge la **rete di casa**:
-  * altri PC, Unraid, Steam Deck, Raspberry Pi e NAS tramite l'agente VU Studio, Glances o Prometheus;
-  * il router (UPnP) e il ping;
-* legge **dati software e online**:
-  * un vero VU-meter audio, il brano in riproduzione e gli FPS nei giochi;
-  * meteo, criptovalute, Home Assistant e MQTT;
-  * qualsiasi API JSON, i tuoi script e un'API locale per inviare dati;
-* crea **quadranti e-ink** partendo da temi (vintage, minimal, strumentazione, HUD sci-fi) o con un editor visuale, con anteprima a 1 bit identica al dispositivo;
-* gestisce la **retroilluminazione RGBW** in base al valore (gradienti, soglie), con effetti, allarmi e sincronizzazione (colore d'accento di Windows, copertina dell'album);
-* offre **profili automatici**, rotazione delle pagine, grafici storici e modalità notte/standby;
-* gira come servizio Windows con icona nel tray e un pannello web opzionale per telefono o altri PC.
+## Perché esiste
+
+Ho quattro dial Streacom VU1 sul mio PC Windows. Il VU-Server ufficiale mi sembrava troppo complicato da configurare e troppo limitato per quello che volevo mostrare, così ho creato l'app che volevo per uso personale. Può essere utile anche ad altri possessori di VU1, quindi è pubblica e gratuita.
+
+**Questo progetto è vibecoded.** È stato scritto con un assistente di programmazione AI (Claude Code). Ho deciso io il design e le funzioni e l'ho provato, ma il codice non l'ho scritto a mano. Tutto il codice sorgente è in questo repository: chiunque può leggerlo, controllarlo e compilarlo da sé. Revisioni del codice e segnalazioni di bug sono benvenute.
+
+## Download
+
+Scarica l'ultimo installer (`VuStudio-Setup-x.y.z.exe`) dalle [Release](https://github.com/blinkone/VU-Studio/releases). Ogni release contiene anche l'agente per Linux e Windows, i checksum SHA-256 e l'archivio del codice sorgente.
+
+* L'installer non è ancora firmato digitalmente, quindi Windows SmartScreen mostrerà un avviso: scegli *Ulteriori informazioni → Esegui comunque*.
+* Chiudi VU-Server prima di avviare VU Studio: la porta COM dell'hub può usarla un solo programma alla volta.
+* Log: `C:\ProgramData\VU Studio\logs` (servizio) e `%LocalAppData%\VU Studio\logs` (app nel tray).
+
+## Cosa fa
+
+* Parla **direttamente con l'hub VU1** via USB seriale: niente server separati né API key.
+* Legge **questo PC**: CPU, GPU, RAM, dischi, rete, ventole e consumi tramite LibreHardwareMonitor, più HWiNFO quando è aperto.
+* Legge **dati software**: un vero VU-meter audio, il brano in riproduzione, il programma in primo piano e gli FPS nei giochi (RivaTuner).
+* Legge la **rete di casa**: altri PC, Unraid, Steam Deck, Raspberry Pi e NAS tramite l'agente VU Studio, Glances o Prometheus, più il router (UPnP) e il ping.
+* Legge **dati online e di domotica**: meteo, criptovalute, Home Assistant, MQTT, qualsiasi API JSON, i tuoi script e un'API locale per inviare dati.
+* Crea **quadranti e-ink** partendo da temi (vintage, minimal, strumentazione, HUD sci-fi) o con un editor visuale a livelli, con anteprima a 1 bit identica al dispositivo.
+* Gestisce la **retroilluminazione RGBW** in base al valore (gradienti, soglie), con effetti, allarmi e sincronizzazione (colore d'accento di Windows, copertina dell'album).
+* Offre **profili automatici** (per esempio mentre gira un gioco), rotazione delle pagine, grafici storici e modalità notte/standby.
+* Gira come servizio Windows con un'app nel tray. L'interfaccia web, in italiano e inglese, si apre anche dal telefono in rete locale se lo abiliti.
+
+## Screenshot
+
+Tutti gli screenshot usano il simulatore di dial integrato (`--simulate 4`).
+
+| | |
+|---|---|
+| ![Editor del quadrante con la galleria dei temi](docs/images/screenshots/dial-face.png) **Editor del quadrante**: scegli un tema o personalizza ogni livello, con anteprima a 1 bit dal vivo. | ![Editor della retroilluminazione con un gradiente](docs/images/screenshots/dial-light.png) **Retroilluminazione**: colore in base al valore con gradienti o soglie, effetti e allarmi. |
+| ![Pagina Fonti](docs/images/screenshots/sources.png) **Fonti**: questo PC, dispositivi in rete, domotica e servizi online. | ![Pagina Sensori](docs/images/screenshots/sensors.png) **Sensori**: tutti i valori con letture dal vivo e ricerca. |
+| ![Pagina Storico con grafici](docs/images/screenshots/history.png) **Storico**: grafici con minimo, media e massimo, esportazione CSV. | ![Pagina Profili](docs/images/screenshots/profiles.png) **Profili**: cambiano cosa mostrano i dial in base al programma aperto, all'orario o a un sensore. |
+| ![Impostazioni hardware](docs/images/screenshots/settings.png) **Impostazioni**: hub, dial, calibrazione, modalità notte e accesso. | ![Dashboard in tema chiaro](docs/images/screenshots/dashboard-light.png) **Tema chiaro** |
+
+<p align="center"><img src="docs/images/screenshots/mobile.png" alt="Dashboard su telefono" width="260"></p>
+
+### Temi e-ink inclusi
 
 ![Temi e-ink inclusi](docs/images/themes.png)
 
@@ -29,9 +56,9 @@ VU Studio sostituisce il VU-Server ufficiale con un'unica applicazione che:
 * [Requisiti](docs/requirements.md)
 * [Architettura](docs/architecture.md)
 * [Protocollo seriale dell'hub VU1](docs/vu1-protocol.md)
-* [Roadmap](docs/roadmap.md)
 * [API HTTP e WebSocket](docs/api.md)
 * [VU Studio Agent per Unraid, Steam Deck e Linux](deploy/agent/README.md)
+* [Roadmap](docs/roadmap.md)
 
 ## Compilare dai sorgenti
 
