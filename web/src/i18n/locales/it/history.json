@@ -1,0 +1,59 @@
+{
+  "title": "Storico",
+  "subtitle": "Guarda come sono cambiati nel tempo fino a quattro sensori: minimo, media, massimo e ultimo valore.",
+  "picker": {
+    "label": "Aggiungi un sensore",
+    "placeholder": "Cerca un sensore…",
+    "full": "Al massimo {{count}} sensori"
+  },
+  "range": { "label": "Intervallo di tempo" },
+  "ranges": {
+    "15m": { "short": "15 min", "long": "ultimi 15 minuti" },
+    "1h": { "short": "1 h", "long": "ultima ora" },
+    "6h": { "short": "6 h", "long": "ultime 6 ore" },
+    "24h": { "short": "24 h", "long": "ultime 24 ore" },
+    "7d": { "short": "7 g", "long": "ultimi 7 giorni" },
+    "30d": { "short": "30 g", "long": "ultimi 30 giorni" }
+  },
+  "view": { "label": "Mostra come", "chart": "Grafico", "table": "Tabella" },
+  "export": {
+    "button": "Esporta CSV",
+    "standard": "CSV standard",
+    "standardHint": "Virgole, orari ISO in UTC",
+    "excel": "CSV per Excel",
+    "excelHint": "Punto e virgola, virgola decimale, ora locale"
+  },
+  "updated": "Aggiornato alle {{time}}",
+  "chips": {
+    "label": "Sensori selezionati",
+    "remove": "Rimuovi {{name}}",
+    "missing": "Questo sensore non è più nel catalogo. Lo storico salvato potrebbe esistere ancora.",
+    "notNumeric": "Si possono mostrare nel grafico solo i sensori numerici."
+  },
+  "stats": {
+    "min": "Min",
+    "avg": "Media",
+    "max": "Max",
+    "last": "Ultimo",
+    "loading": "Caricamento…",
+    "noData": "Ancora nessun dato in questo intervallo",
+    "since": "Registrato dal {{time}}"
+  },
+  "chart": {
+    "titleUnit": "Valori in {{unit}}",
+    "titleNoUnit": "Valori",
+    "legend": "Sensori in questo grafico",
+    "loading": "Caricamento dello storico…",
+    "emptyTitle": "Ancora nessuno storico",
+    "emptyBody": "La registrazione parte quando un sensore è usato su un dial o aperto qui. Il grafico si riempie man mano che arrivano i dati: ogni secondo nella vista da 15 minuti, una volta al minuto per gli intervalli più lunghi.",
+    "errorTitle": "Impossibile caricare lo storico",
+    "errorBody": "VU Studio non ha restituito dati. Riproverà a breve."
+  },
+  "table": { "label": "Dati dello storico", "time": "Ora" },
+  "empty": {
+    "title": "Scegli un sensore per vederne lo storico",
+    "body": "VU Studio registra lo storico dei sensori che usi sui dial e di quelli che apri qui. La registrazione parte la prima volta che aggiungi un sensore.",
+    "suggestions": "Prova con uno di questi"
+  },
+  "footnote": "Gli intervalli lunghi mostrano un punto al minuto, raggruppati quando sono molti: la fascia colorata va dal minimo al massimo di ogni gruppo e la linea è la media."
+}

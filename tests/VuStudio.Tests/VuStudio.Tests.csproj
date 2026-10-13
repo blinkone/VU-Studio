@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>VuStudio.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\VuStudio.Agent\VuStudio.Agent.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Core\VuStudio.Core.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Hardware\VuStudio.Hardware.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Rendering\VuStudio.Rendering.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Sources\VuStudio.Sources.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Sources.Windows\VuStudio.Sources.Windows.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Server\VuStudio.Server.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Session\VuStudio.Session.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

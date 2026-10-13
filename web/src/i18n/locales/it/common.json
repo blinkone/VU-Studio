@@ -1,0 +1,91 @@
+{
+  "appName": "VU Studio",
+  "nav": {
+    "dashboard": "Dial",
+    "profiles": "Profili",
+    "sources": "Fonti",
+    "sensors": "Sensori",
+    "history": "Storico",
+    "settings": "Impostazioni"
+  },
+  "actions": {
+    "save": "Salva",
+    "saving": "Salvataggio…",
+    "discard": "Annulla modifiche",
+    "cancel": "Annulla",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "edit": "Modifica",
+    "duplicate": "Duplica",
+    "close": "Chiudi",
+    "apply": "Applica",
+    "reset": "Ripristina",
+    "search": "Cerca",
+    "back": "Indietro"
+  },
+  "status": {
+    "connected": "Connesso",
+    "connecting": "Connessione…",
+    "disconnected": "Disconnesso",
+    "error": "Errore",
+    "simulated": "Simulatore",
+    "liveLost": "Connessione a VU Studio persa — riconnessione in corso…"
+  },
+  "unsaved": {
+    "title": "Modifiche non salvate",
+    "message": "Hai modifiche non ancora salvate.",
+    "conflict": "La configurazione è stata modificata altrove. Ricarica per vedere la versione aggiornata."
+  },
+  "hub": {
+    "title": "Hub",
+    "noHub": "Nessun hub VU1 trovato",
+    "port": "Porta {{port}}"
+  },
+  "profile": {
+    "active": "Profilo attivo",
+    "auto": "Automatico",
+    "paused": "In pausa"
+  },
+  "night": {
+    "none": "Normale",
+    "dim": "Attenuato",
+    "lightsOff": "Luci spente",
+    "sleep": "A riposo"
+  },
+  "language": {
+    "label": "Lingua",
+    "auto": "Automatica",
+    "en": "English",
+    "it": "Italiano"
+  },
+  "theme": {
+    "dark": "Scuro",
+    "light": "Chiaro",
+    "auto": "Sistema"
+  },
+  "categories": {
+    "cpu": "CPU",
+    "gpu": "GPU",
+    "memory": "Memoria",
+    "storage": "Archiviazione",
+    "network": "Rete",
+    "cooling": "Raffreddamento",
+    "power": "Alimentazione",
+    "battery": "Batteria",
+    "motherboard": "Scheda madre",
+    "audio": "Audio",
+    "media": "Media",
+    "game": "Giochi",
+    "process": "Processi",
+    "time": "Tempo",
+    "weather": "Meteo",
+    "finance": "Finanza",
+    "home": "Casa",
+    "system": "Sistema",
+    "custom": "Personalizzato"
+  },
+  "slot": "Dial {{slot}}",
+  "empty": "Ancora niente qui",
+  "loading": "Caricamento…",
+  "errorTitle": "Qualcosa è andato storto"
+}

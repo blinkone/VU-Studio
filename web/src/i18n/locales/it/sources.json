@@ -1,0 +1,148 @@
+{
+  "title": "Fonti",
+  "subtitle": "Collega i luoghi da cui VU Studio legge i dati: questo PC, altri dispositivi della rete, la domotica e i servizi online. Ogni fonte aggiunge sensori che puoi mostrare su un dial.",
+  "yours": {
+    "title": "Le tue fonti",
+    "emptyTitle": "Ancora nessuna fonte",
+    "emptyBody": "Scegline una dall’elenco qui sotto. Ogni fonte aggiunge sensori che potrai mostrare sui tuoi dial."
+  },
+  "discovery": {
+    "title": "Trovati sulla tua rete",
+    "subtitle": "Gli agent di VU Studio che si annunciano su questa rete.",
+    "refresh": "Cerca di nuovo",
+    "searching": "Ricerca in corso sulla rete…",
+    "add": "Aggiungi",
+    "version": "versione {{version}}",
+    "empty": "Nessun nuovo agent trovato. Verifica che l’agent sia in esecuzione e sulla stessa rete, oppure aggiungilo con il suo indirizzo qui sotto.",
+    "unavailable": "La ricerca in rete non è disponibile su questo computer. Aggiungi l’agent con il suo indirizzo qui sotto.",
+    "error": "Impossibile cercare sulla rete.",
+    "allAdded": "Tutti gli agent trovati sono già tra le tue fonti."
+  },
+  "add": {
+    "title": "Aggiungi una fonte",
+    "subtitle": "Scegli cosa vuoi collegare.",
+    "search": "Cerca tipi di fonte",
+    "clearSearch": "Cancella la ricerca",
+    "errorTitle": "Impossibile caricare i tipi di fonte",
+    "errorBody": "VU Studio non ha risposto. Controlla che il servizio sia in esecuzione.",
+    "retry": "Riprova",
+    "noMatch": "Nessun tipo di fonte corrisponde alla ricerca.",
+    "noTypes": "Questa versione di VU Studio non ha tipi di fonte."
+  },
+  "groups": {
+    "thisPc": {
+      "title": "Questo PC",
+      "description": "I sensori di questo computer: CPU, GPU, memoria, dischi e rete."
+    },
+    "software": {
+      "title": "Software",
+      "description": "Audio, contenuti multimediali, giochi, processi e sessione utente."
+    },
+    "network": {
+      "title": "Rete",
+      "description": "Altri computer e dispositivi della tua rete locale."
+    },
+    "homeAutomation": {
+      "title": "Domotica",
+      "description": "Home Assistant, MQTT e dispositivi smart."
+    },
+    "online": {
+      "title": "Online",
+      "description": "Meteo, mercati e API web."
+    },
+    "utility": {
+      "title": "Utilità",
+      "description": "Orologio, timer, script, API push e dati dimostrativi."
+    }
+  },
+  "platforms": {
+    "any": "Tutti i sistemi",
+    "windows": "Windows",
+    "linux": "Linux",
+    "macOS": "macOS"
+  },
+  "badges": {
+    "desktop": "Nell’app desktop",
+    "desktopHint": "Questa fonte gira nell’app desktop di VU Studio (nella tua sessione utente), non nel servizio in background.",
+    "localOnly": "Solo locale",
+    "localOnlyHint": "Le sue impostazioni si possono modificare solo dal PC su cui gira VU Studio."
+  },
+  "health": {
+    "ok": "Funziona",
+    "starting": "Avvio…",
+    "degraded": "Funziona in parte",
+    "unavailable": "Non disponibile",
+    "error": "Errore",
+    "stopped": "Ferma",
+    "disabled": "Disattivata",
+    "notStarted": "Non ancora avviata"
+  },
+  "card": {
+    "enabledAria": "Attiva o disattiva {{name}}",
+    "lockedHint": "Stai usando VU Studio da un altro dispositivo. Questa fonte si può modificare solo dal PC su cui gira.",
+    "lockedAddHint": "Questo tipo di fonte si può aggiungere solo dal PC su cui gira VU Studio.",
+    "since": "In funzione dal {{time}}",
+    "pendingNew": "Nuova, da salvare",
+    "pendingModified": "Modificata, da salvare",
+    "unsupported": "Non disponibile su questo sistema",
+    "unknownType": "Tipo sconosciuto",
+    "restarts_one": "Riavviata {{count}} volta",
+    "restarts_other": "Riavviata {{count}} volte",
+    "sensors_one": "{{count}} sensore",
+    "sensors_other": "{{count}} sensori",
+    "noSensors": "Nessun sensore",
+    "view": "Visualizza",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "viewAria": "Visualizza {{name}}",
+    "editAria": "Modifica {{name}}",
+    "deleteAria": "Elimina {{name}}"
+  },
+  "gallery": {
+    "unavailable": "Non disponibile su questo sistema",
+    "added": "Aggiunta",
+    "configured_one": "{{count}} aggiunta",
+    "configured_other": "{{count}} aggiunte",
+    "add": "Aggiungi",
+    "addAria": "Aggiungi {{name}}",
+    "editAria": "Modifica {{name}}"
+  },
+  "editor": {
+    "addTitle": "Aggiungi {{name}}",
+    "editTitle": "Modifica {{name}}",
+    "noSettings": "Questa fonte non ha impostazioni.",
+    "readOnly": "Stai usando VU Studio da un altro dispositivo. Le impostazioni di questa fonte si possono modificare solo dal PC su cui gira.",
+    "nameLabel": "Nome",
+    "nameHelp": "Facoltativo. Serve a riconoscerla negli elenchi, per esempio «Router» o «Studio».",
+    "moreOptions": "Altre opzioni ({{count}})",
+    "advanced": "Avanzate",
+    "idLabel": "Identificativo",
+    "idHelp": "Compare all’inizio di ogni sensore di questa fonte, per esempio «ping-2/latenza». Dopo la creazione non si può più cambiare.",
+    "idLockedEdit": "L’identificativo non si può cambiare: dial e profili si riferiscono ai sensori usandolo.",
+    "idLockedSingleton": "Questo tipo di fonte può esistere una sola volta, quindi l’identificativo è fisso.",
+    "idError": {
+      "empty": "Inserisci un identificativo.",
+      "pattern": "Usa solo lettere minuscole, cifre e trattini, iniziando con una lettera o una cifra (massimo 63 caratteri).",
+      "reserved": "Questo identificativo è riservato.",
+      "duplicate": "Esiste già una fonte con questo identificativo."
+    },
+    "missing": "Da compilare: {{fields}}",
+    "add": "Aggiungi fonte"
+  },
+  "delete": {
+    "title": "Eliminare «{{name}}»?",
+    "body": "La fonte «{{id}}» viene rimossa dalla configurazione e i suoi sensori spariscono da VU Studio dopo il salvataggio.",
+    "usageTitle": "C’è ancora chi la usa",
+    "usagePages_one": "{{count}} pagina di un dial usa sensori di questa fonte.",
+    "usagePages_other": "{{count}} pagine dei dial usano sensori di questa fonte.",
+    "usageConditions_one": "{{count}} condizione di un profilo controlla uno dei suoi sensori.",
+    "usageConditions_other": "{{count}} condizioni dei profili controllano i suoi sensori.",
+    "usageHint": "Resteranno senza dati finché non scegli un altro sensore.",
+    "autoCreated": "VU Studio ricrea questa fonte a ogni avvio. Per tenerla spenta in modo definitivo, disattivala invece di eliminarla.",
+    "disableInstead": "Disattiva invece",
+    "confirm": "Elimina"
+  },
+  "notify": {
+    "added": "«{{name}}» aggiunta. Salva per avviarla."
+  }
+}

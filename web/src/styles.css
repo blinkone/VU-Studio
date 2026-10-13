@@ -1,0 +1,20 @@
+:root {
+  --vs-panel: #ffffff;
+  --vs-canvas: #f4f4f6;
+}
+
+/* postcss-preset-mantine rewrites light-dark() inside :root into a selector that never matches,
+   so the dark values are set explicitly for Mantine's dark color scheme. */
+:root[data-mantine-color-scheme='dark'] {
+  --vs-panel: #16181d;
+  --vs-canvas: #0f1014;
+}
+
+body {
+  background: var(--vs-canvas);
+}
+
+/* Crisp upscaling of the 1-bit e-paper previews. */
+img.pixelated {
+  image-rendering: pixelated;
+}

@@ -1,0 +1,174 @@
+/*
+ * Chart tokens. Series hues are the first four slots of the validated categorical palette
+ * (blue, orange, aqua, yellow), stepped separately for light and dark surfaces.
+ * Apply `.tokens` to any container that holds chart parts (chips, tiles, legend, chart).
+ */
+.tokens {
+  --series-1: light-dark(#2a78d6, #3987e5);
+  --series-2: light-dark(#eb6834, #d95926);
+  --series-3: light-dark(#1baf7a, #199e70);
+  --series-4: light-dark(#eda100, #c98500);
+  --chart-surface: var(--mantine-color-body);
+  --chart-grid: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+  --chart-axis: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-4));
+  --chart-muted: var(--mantine-color-dimmed);
+  --chart-text: var(--mantine-color-text);
+}
+
+.chart {
+  position: relative;
+  width: 100%;
+  outline: none;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.chart:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 2px;
+  border-radius: var(--mantine-radius-sm);
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+  transition: opacity 150ms ease;
+}
+
+.svg[data-loading='true'] {
+  opacity: 0.55;
+}
+
+.grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axis {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.tickText {
+  fill: var(--chart-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.unitText {
+  fill: var(--chart-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.endText {
+  fill: var(--chart-text);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.band {
+  fill-opacity: 0.1;
+  stroke: none;
+}
+
+.line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dot {
+  stroke: var(--chart-surface);
+  stroke-width: 2;
+}
+
+.cursor {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  min-width: 150px;
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-body);
+  box-shadow: var(--mantine-shadow-md);
+  font-size: var(--mantine-font-size-xs);
+}
+
+.tooltipTime {
+  color: var(--chart-muted);
+  margin-bottom: 4px;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.tooltipRow + .tooltipRow {
+  margin-top: 4px;
+}
+
+.keyLine {
+  flex: none;
+  align-self: center;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.tooltipValue {
+  margin-left: auto;
+  padding-left: 12px;
+  color: var(--chart-text);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tooltipName {
+  color: var(--chart-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tooltipRange {
+  margin: 1px 0 0 20px;
+  color: var(--chart-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,9 @@
+# Overrides the repository-wide .editorconfig (utf-8, lf) for the Inno Setup script.
+#
+# VuStudio.iss contains Italian text with accented letters. Inno Setup only reads a script as
+# UTF-8 when it starts with a byte order mark; without one it assumes the ANSI code page of the
+# machine compiling it, and the accents come out wrong. The CRLF endings match the `eol=crlf`
+# rule for *.iss in .gitattributes.
+[*.iss]
+charset = utf-8-bom
+end_of_line = crlf
