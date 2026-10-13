@@ -4,7 +4,7 @@
 
 🇮🇹 [Leggi in italiano](README.it.md)
 
-> Status: **early development**. The design is set; the modules are being built. See [the roadmap](docs/roadmap.md).
+> Status: **pre-release**. All modules are built and tested on Linux with a dial simulator; testing on real Windows hardware is next. See [the roadmap](docs/roadmap.md).
 
 VU Studio replaces the official VU-Server with a single application that:
 
@@ -25,15 +25,23 @@ VU Studio replaces the official VU-Server with a single application that:
 * [Architecture](docs/architecture.md)
 * [VU1 hub serial protocol](docs/vu1-protocol.md)
 * [Roadmap](docs/roadmap.md)
+* [HTTP and WebSocket API](docs/api.md)
+* [VU Studio Agent for Unraid, Steam Deck and Linux](deploy/agent/README.md)
 
 ## Building from source
 
-Requirements: .NET 10 SDK. Node.js 22 is also needed once the web UI lands.
+Requirements: .NET 10 SDK and Node.js 22.
 
 ```bash
+(cd web && npm ci && npm run build)      # web UI, output in src/VuStudio.Server/wwwroot
 dotnet build VuStudio.slnx
 dotnet test --project tests/VuStudio.Tests
+
+# Try it without hardware: four simulated dials, UI at http://127.0.0.1:5341
+dotnet run --project src/VuStudio.Server -- --simulate 4
 ```
+
+Windows packages (installer and agent binaries) are built by `build/publish.ps1` / `build/publish.sh` and, on a `v*` tag, by the release workflow.
 
 ## License
 
