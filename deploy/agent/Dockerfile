@@ -10,7 +10,9 @@ RUN dotnet restore src/VuStudio.Agent/VuStudio.Agent.csproj
 COPY src/VuStudio.Core src/VuStudio.Core
 COPY src/VuStudio.Sources src/VuStudio.Sources
 COPY src/VuStudio.Agent src/VuStudio.Agent
-RUN dotnet publish src/VuStudio.Agent/VuStudio.Agent.csproj -c Release --no-restore -o /app /p:UseAppHost=false
+# No --no-restore: publish can pull packages that the plain restore above did not (newer SDKs add
+# Microsoft.NET.ILLink.Tasks at publish time). The restore layer above still caches the rest.
+RUN dotnet publish src/VuStudio.Agent/VuStudio.Agent.csproj -c Release -o /app /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 WORKDIR /app

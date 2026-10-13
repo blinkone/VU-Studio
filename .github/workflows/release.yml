@@ -104,7 +104,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-      packages: write
     steps:
       - name: Check out
         uses: actions/checkout@v4
@@ -157,7 +156,33 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # The multi-arch image is built and pushed for tags only.
+  # The multi-arch Agent image. Separate from the release so a registry or Docker problem never
+  # holds back the installer and the binaries.
+  image:
+    name: Agent image
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Version
+        id: ver
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="0.1.0-dev.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      # The image is built and pushed for tags only.
       - name: Detect Agent Dockerfile
         id: docker
         run: |
