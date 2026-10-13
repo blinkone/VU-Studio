@@ -11,6 +11,7 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\VuStudio.Agent\VuStudio.Agent.csproj" />
     <ProjectReference Include="..\..\src\VuStudio.Core\VuStudio.Core.csproj" />
     <ProjectReference Include="..\..\src\VuStudio.Hardware\VuStudio.Hardware.csproj" />
     <ProjectReference Include="..\..\src\VuStudio.Rendering\VuStudio.Rendering.csproj" />
