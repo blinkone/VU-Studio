@@ -36,12 +36,13 @@ const navItems = [
 ] as const;
 
 export function App({ queryClient }: { queryClient: QueryClient }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [opened, { toggle, close }] = useDisclosure();
   const location = useLocation();
   const configRevision = useLive((s) => s.configRevision);
   const lastNotification = useLive((s) => s.lastNotification);
   const load = useConfigDraft((s) => s.load);
+  const savedLanguage = useConfigDraft((s) => s.base?.general?.language);
 
   useEffect(() => {
     connectLive(queryClient);
@@ -57,6 +58,13 @@ export function App({ queryClient }: { queryClient: QueryClient }) {
       notifications.show({ title: lastNotification.title, message: lastNotification.message, color: 'red' });
     }
   }, [lastNotification]);
+
+  // A language saved in Settings wins over the browser's; "auto" leaves the detector alone.
+  useEffect(() => {
+    if ((savedLanguage === 'en' || savedLanguage === 'it') && i18n.resolvedLanguage !== savedLanguage) {
+      void i18n.changeLanguage(savedLanguage);
+    }
+  }, [savedLanguage, i18n]);
 
   useEffect(close, [location.pathname, close]);
 
