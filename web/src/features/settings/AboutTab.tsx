@@ -7,7 +7,7 @@ import { Logo } from '@/components/layout/Logo';
 import { CopyAction } from './CopyAction';
 import { Section } from './Section';
 
-const REPO_URL = 'https://github.com/blinkone/VuDials';
+const REPO_URL = 'https://github.com/blinkone/VU-Studio';
 const DOCS_URL = `${REPO_URL}/tree/main/docs`;
 
 function External({ href, children }: { href: string; children: ReactNode }) {
