@@ -43,7 +43,7 @@ These parts compile and pass tests against fakes and fixtures but have not run o
 - [ ] LibreHardwareMonitor 0.9.6 with and without PawnIO; HWiNFO shared memory under LocalSystem
 - [ ] Agent Docker image on Unraid, `install.sh` on a Steam Deck, mDNS discovery over the LAN
 - [ ] UPnP on the ISP router and Google Nest Wifi; Unraid GraphQL field names; Home Assistant WebSocket; MQTT broker
-- [ ] First tagged release through `.github/workflows/release.yml`
+- [x] First tagged release through `.github/workflows/release.yml` (v0.1.0-alpha.1)
 
 ## Before the first public release
 
