@@ -45,6 +45,10 @@ These parts compile and pass tests against fakes and fixtures but have not run o
 - [ ] UPnP on the ISP router and Google Nest Wifi; Unraid GraphQL field names; Home Assistant WebSocket; MQTT broker
 - [ ] First tagged release through `.github/workflows/release.yml`
 
+## Before the first public release
+
+- [ ] Authenticate the tray ↔ service session channel per Windows user (e.g. Negotiate auth on loopback or a named pipe with client impersonation) and keep user-session scripts per Windows user. Today, on a PC with several Windows accounts, any local user can add a script that the other users' trays would run.
+
 ## Milestone 2 — Polish
 
 - First-run wizard: detect dials, identify, order, pick a starter profile
