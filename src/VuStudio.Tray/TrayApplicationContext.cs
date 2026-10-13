@@ -41,6 +41,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
     private readonly ToolStripMenuItem _openItem;
     private readonly ToolStripMenuItem _browserItem;
+    private readonly ToolStripMenuItem _statusItem;
     private readonly ToolStripMenuItem _startServiceItem;
     private readonly ToolStripSeparator _startServiceSeparator = new();
     private readonly ToolStripMenuItem _profilesItem;
@@ -72,6 +73,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
         _openItem = new ToolStripMenuItem(_text["Open"], null, (_, _) => ShowWindow()) { Font = new Font(_menu.Font, FontStyle.Bold) };
         _browserItem = new ToolStripMenuItem(_text["OpenInBrowser"], null, (_, _) => OpenInBrowser());
+        _statusItem = new ToolStripMenuItem(_text["ServiceOffline"]) { Enabled = false };
         _startServiceItem = new ToolStripMenuItem(_text["StartService"], null, (_, _) => StartService());
         _profilesItem = new ToolStripMenuItem(_text["Profiles"]);
         _pauseItem = new ToolStripMenuItem(_text["Pause"], null, (_, _) => Run(() => _api.SetPausedAsync(!(_engine?.Paused ?? false))));
@@ -79,7 +81,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         _startupItem = new ToolStripMenuItem(_text["StartWithWindows"], null, (_, _) => ToggleStartup());
         _menu.Items.AddRange(
         [
-            _openItem, _browserItem, _startServiceSeparator, _startServiceItem, new ToolStripSeparator(),
+            _openItem, _browserItem, _startServiceSeparator, _statusItem, _startServiceItem, new ToolStripSeparator(),
             _profilesItem, _pauseItem, _refreshItem, new ToolStripSeparator(),
             _startupItem, new ToolStripMenuItem(_text["About"], null, (_, _) => ShowAbout()),
             new ToolStripMenuItem(_text["Exit"], null, (_, _) => ExitThread()),
@@ -266,8 +268,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
         }
 
         _icon.Text = tooltip.Length > 63 ? tooltip[..63] : tooltip;
-        _startServiceItem.Visible = _startServiceSeparator.Visible = !_online;
-        _startServiceItem.Text = _online ? _text["StartService"] : $"{_text["StartService"]}  ({_text["ServiceOffline"].TrimEnd('.')})";
+        _statusItem.Visible = _startServiceItem.Visible = _startServiceSeparator.Visible = !_online;
         _browserItem.Enabled = _online;
         _profilesItem.Enabled = _pauseItem.Enabled = _refreshItem.Enabled = _online;
         _pauseItem.Text = _engine?.Paused == true ? _text["Resume"] : _text["Pause"];
