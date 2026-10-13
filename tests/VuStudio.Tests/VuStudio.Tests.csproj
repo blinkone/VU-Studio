@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\src\VuStudio.Rendering\VuStudio.Rendering.csproj" />
     <ProjectReference Include="..\..\src\VuStudio.Sources\VuStudio.Sources.csproj" />
     <ProjectReference Include="..\..\src\VuStudio.Server\VuStudio.Server.csproj" />
+    <ProjectReference Include="..\..\src\VuStudio.Session\VuStudio.Session.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
