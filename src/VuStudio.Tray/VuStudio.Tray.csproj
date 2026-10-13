@@ -7,11 +7,28 @@
     <AssemblyName>VuStudio</AssemblyName>
     <RootNamespace>VuStudio.Tray</RootNamespace>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationIcon>Assets\vustudio.ico</ApplicationIcon>
+    <!-- Zero-copy span over the RTSS shared-memory view. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\VuStudio.Core\VuStudio.Core.csproj" />
+    <ProjectReference Include="..\VuStudio.Session\VuStudio.Session.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" />
+    <PackageReference Include="NAudio.Wasapi" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\vustudio.ico" LogicalName="VuStudio.Tray.vustudio.ico" />
+    <None Remove="Assets\generate-icon.py" />
+  </ItemGroup>
+
+  <!-- The WebView2 package always references its WPF control for net5+; this WinForms app does not use it,
+       and the reference drags in WPF's WindowsBase (MSB3277 conflict). -->
+  <Target Name="RemoveWebView2Wpf" AfterTargets="ResolvePackageAssets" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Wpf'" />
+    </ItemGroup>
+  </Target>
 </Project>

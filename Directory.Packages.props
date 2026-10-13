@@ -15,6 +15,9 @@
     <PackageVersion Include="MQTTnet" Version="5.2.0.1603" />
     <PackageVersion Include="LibreHardwareMonitorLib" Version="0.9.6" />
     <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+    <!-- Exact pin, never floating: '*' resolves the mis-versioned, unlisted NAudio.Wasapi 22.0.0
+         (docs/integrations/windows-sources.md §6.1). Ignore NAudio* >= 20 in dependency bots. -->
+    <PackageVersion Include="NAudio.Wasapi" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup Label="Tests">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
