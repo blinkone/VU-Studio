@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json.Nodes;
+using VuStudio.Core.Providers;
 using VuStudio.Sources.Common;
 
 namespace VuStudio.Sources.Remote;
@@ -55,7 +56,7 @@ internal static class NetHttp
             handler.SslOptions.RemoteCertificateValidationCallback = static (_, _, _, _) => true;
         }
 
-        var client = new HttpClient(handler, disposeHandler: true) { Timeout = Timeout.InfiniteTimeSpan };
+        var client = new HttpClient(OutboundMarker.Wrap(handler), disposeHandler: true) { Timeout = Timeout.InfiniteTimeSpan };
         return (client, client);
     }
 

@@ -26,12 +26,16 @@ public sealed class HistoryRecorder
 {
     private const int Capacity = 3600;
 
+    /// <summary>Most sensors that can be added on demand with <see cref="Track"/> (on top of the configured ones).</summary>
+    public const int MaxTracked = 2000;
+
     private readonly SensorHub _hub;
     private readonly IHistoryPersistence? _persistence;
     private readonly ILogger<HistoryRecorder> _logger;
     private readonly TimeProvider _time;
     private readonly ConcurrentDictionary<string, Series> _series = new(StringComparer.Ordinal);
     private volatile HashSet<string> _recorded = new(StringComparer.Ordinal);
+    private readonly ConcurrentDictionary<string, byte> _tracked = new(StringComparer.Ordinal);
     private DateTimeOffset _lastPrune = DateTimeOffset.MinValue;
 
     public HistoryRecorder(SensorHub hub, ILogger<HistoryRecorder> logger, IHistoryPersistence? persistence = null, TimeProvider? time = null)
@@ -46,22 +50,46 @@ public sealed class HistoryRecorder
 
     public bool PersistenceEnabled { get; set; } = true;
 
-    public IReadOnlyCollection<string> RecordedSensors => _recorded;
+    /// <summary>The configured sensors plus the ones added with <see cref="Track"/>.</summary>
+    public IReadOnlyCollection<string> RecordedSensors => _recorded.Union(_tracked.Keys, StringComparer.Ordinal).ToList();
 
-    /// <summary>Replaces the set of sensors to record. Buffers of dropped sensors are kept until they age out.</summary>
-    public void SetRecordedSensors(IEnumerable<string> sensorIds) =>
-        _recorded = new HashSet<string>(sensorIds.Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.Ordinal);
+    /// <summary>Number of sensors added on demand with <see cref="Track"/>.</summary>
+    public int TrackedCount => _tracked.Count;
 
-    /// <summary>Adds one sensor to the recorded set (e.g. when the UI opens its chart).</summary>
-    public void Track(string sensorId)
+    /// <summary>
+    /// Replaces the set of configured sensors to record and forgets the on-demand ones (the UI tracks again what it
+    /// still shows). Buffers of dropped sensors are kept until they age out.
+    /// </summary>
+    public void SetRecordedSensors(IEnumerable<string> sensorIds)
     {
-        if (_recorded.Contains(sensorId))
+        _recorded = new HashSet<string>(sensorIds.Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.Ordinal);
+        _tracked.Clear();
+    }
+
+    /// <summary>
+    /// Adds one sensor to the recorded set (e.g. when the UI opens its chart). Only sensors that exist in the hub are
+    /// accepted, and at most <see cref="MaxTracked"/> of them, so a client cannot grow the set without bound.
+    /// O(1). Returns false when the sensor is unknown or the limit is reached.
+    /// </summary>
+    public bool Track(string sensorId)
+    {
+        if (string.IsNullOrWhiteSpace(sensorId))
         {
-            return;
+            return false;
         }
 
-        var copy = new HashSet<string>(_recorded, StringComparer.Ordinal) { sensorId };
-        _recorded = copy;
+        if (_recorded.Contains(sensorId) || _tracked.ContainsKey(sensorId))
+        {
+            return true;
+        }
+
+        if (!_hub.TryGet(sensorId, out _) || _tracked.Count >= MaxTracked)
+        {
+            return false;
+        }
+
+        _tracked.TryAdd(sensorId, 0);
+        return true;
     }
 
     /// <summary>Takes one sample of every recorded sensor. Call once per second.</summary>
@@ -69,7 +97,8 @@ public sealed class HistoryRecorder
     {
         var now = _time.GetUtcNow();
         var flush = new List<HistoryAggregate>();
-        foreach (var id in _recorded)
+        var recorded = _recorded;
+        foreach (var id in recorded.Concat(_tracked.Keys.Where(k => !recorded.Contains(k))))
         {
             var series = _series.GetOrAdd(id, _ => new Series());
             var value = _hub.GetNumber(id);

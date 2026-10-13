@@ -184,6 +184,7 @@ internal sealed class HomeAssistantProvider : NetworkPollingProvider
         var builder = new UriBuilder(NetHttp.Combine(_baseUri!, "api/websocket")) { Scheme = _baseUri!.Scheme == "https" ? "wss" : "ws" };
         using var socket = new ClientWebSocket();
         socket.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+        socket.Options.SetRequestHeader(VuStudio.Core.Providers.OutboundMarker.HeaderName, VuStudio.Core.Providers.OutboundMarker.Value);
         if (_allowInvalidCertificate)
         {
             socket.Options.RemoteCertificateValidationCallback = static (_, _, _, _) => true;

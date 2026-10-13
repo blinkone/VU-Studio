@@ -19,10 +19,17 @@ The data model is defined in `src/VuStudio.Core`:
 | Caller | Requirement |
 |---|---|
 | Browser / web UI | Every `POST`/`PUT`/`DELETE` must send the header `X-VuStudio: 1`. Requests whose `Origin` differs from the server origin are rejected. |
-| LAN clients | Must log in (`POST /api/auth/login`), which sets an `HttpOnly` cookie. Loopback clients are trusted. |
-| Push clients | `Authorization: Bearer <web.apiToken>`. |
+| Local clients | Trusted without login: the connection comes from a loopback address **and** the `Host` header is `localhost`, `*.localhost`, `127.0.0.1` or `[::1]` (any port). |
+| LAN clients | Everyone else, including loopback connections that use the machine name or a `web.allowedHosts` name. They must log in (`POST /api/auth/login`), which sets an `HttpOnly` cookie. |
+| Push clients | `Authorization: Bearer <web.apiToken>` header only (a `?token=` query parameter is not accepted). |
 
-Every request must also carry a valid `Host` header: localhost, an IP literal, the machine name or an entry in `web.allowedHosts`.
+Every request must also carry a valid `Host` header: localhost, an IP literal, the machine name (also with `.local`, `.lan`, `.home`) or an entry in `web.allowedHosts`. These names are *accepted*, but only the loopback names above make a request local (DNS-rebinding protection).
+
+Settings that only local clients may change (a LAN `PUT /api/config` that changes them gets `403`): every `web.*` setting (LAN access, port, allowed host names, password, API token) and local-only sources such as scripts.
+
+When a LAN `PUT /api/config` keeps a masked secret (`"__secret__"`), the stored value is reused only if the source keeps its id, type and every non-secret setting it could be sent with (address, user name, port, TLS options…; timing fields and sensor lists may change). Rows of a table (e.g. HTTP JSON headers) are matched by their non-secret columns. Otherwise the request fails with `400` and the secret must be typed again. This applies to local requests too.
+
+Requests carrying the `X-VuStudio-Outbound` header are refused with `403`: the service adds it to every request its own sources send, so a source cannot be pointed at the service's API. An HTTP JSON source last changed from the LAN also refuses loopback and link-local destinations.
 
 ## Information and state
 
@@ -120,7 +127,8 @@ Client → server: `{ "type": "subscribe", "sensors": "*" }` or `{ "type": "subs
 | Method | Path | Result |
 |---|---|---|
 | GET | `/api/history?sensor=<id>&from=<iso>&to=<iso>` | `[{ minute, min, avg, max, count }]` |
-| GET | `/api/history/recent?sensor=<id>&seconds=900` | `[{ time, value }]` at 1 s resolution (≤ 1 h). Calling it starts recording the sensor. |
+| GET | `/api/history/recent?sensor=<id>&seconds=900` | `[{ time, value }]` at 1 s resolution (≤ 1 h). |
+| POST | `/api/history/track` | `{ sensor }`: also record a sensor that is not in the configured history set (the UI calls it when it opens a chart). `204`; `404` for an unknown sensor; `429` once 2000 sensors are tracked this way. The on-demand set is cleared when the configuration changes. |
 
 ## Authentication
 
@@ -133,7 +141,7 @@ Client → server: `{ "type": "subscribe", "sensors": "*" }` or `{ "type": "subs
 
 ## Push API (external programs)
 
-`POST /api/push` with `Authorization: Bearer <token>`:
+`POST /api/push` with the header `Authorization: Bearer <token>` (the token is not accepted in the query string):
 
 ```json
 { "sensors": [ { "id": "obs/viewers", "value": 42, "name": "Viewers", "unit": "", "min": 0, "max": 500, "icon": "eye" },

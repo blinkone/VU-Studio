@@ -154,6 +154,14 @@ public sealed class ProviderInstanceConfig
     public bool Enabled { get; set; } = true;
 
     public JsonObject Settings { get; set; } = new();
+
+    /// <summary>
+    /// Set by the service when the type or settings were last changed by a LAN (non-local) request; cleared when a
+    /// local request changes them. Providers that make outgoing requests use it to refuse loopback and link-local
+    /// destinations (SSRF protection). The value sent by a client is ignored.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool ChangedRemotely { get; set; }
 }
 
 /// <summary>Creates provider instances of one type. Register implementations in DI.</summary>

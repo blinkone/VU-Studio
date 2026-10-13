@@ -9,12 +9,12 @@
   <Privileged>false</Privileged>
   <Support>https://github.com/blinkone/VuDials/issues</Support>
   <Project>https://github.com/blinkone/VuDials</Project>
-  <Overview>Exposes this Unraid server's sensors (CPU, memory, temperatures, disks, network, array state, parity check and disk temperatures) to VU Studio, which shows them on Streacom VU1 dials. Uses host networking so network rates and mDNS discovery work. Set an access token and enter the same token in VU Studio.</Overview>
+  <Overview>Exposes this Unraid server's sensors (CPU, memory, temperatures, disks, network, array state, parity check and disk temperatures) to VU Studio, which shows them on Streacom VU1 dials. Uses host networking so network rates and mDNS discovery work. Set an access token and enter the same token in VU Studio. If you leave it empty, the agent generates one on the first start, keeps it in the data folder and prints it once in the container log.</Overview>
   <Category>Tools:System</Category>
   <WebUI>http://[IP]:[PORT:5342]/api/v1/info</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/blinkone/VuDials/main/deploy/agent/unraid/vustudio-agent.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/blinkone/VuDials/main/deploy/agent/unraid/icon.png</Icon>
-  <ExtraParams>--read-only --tmpfs /tmp</ExtraParams>
+  <ExtraParams>--read-only --tmpfs /tmp --pid host</ExtraParams>
   <PostArgs/>
   <CPUset/>
   <DateInstalled/>
@@ -22,7 +22,8 @@
   <DonateLink/>
   <Requires/>
   <Config Name="Agent port" Target="VUSTUDIO_AGENT_PORT" Default="5342" Mode="" Description="Port VU Studio connects to (host network: the agent listens on it directly)." Type="Variable" Display="always" Required="true" Mask="false">5342</Config>
-  <Config Name="Access token" Target="VUSTUDIO_AGENT_TOKEN" Default="" Mode="" Description="Shared secret VU Studio sends as a Bearer token. Leave empty to allow anyone on the LAN to read the sensors." Type="Variable" Display="always" Required="false" Mask="true"/>
+  <Config Name="Access token" Target="VUSTUDIO_AGENT_TOKEN" Default="" Mode="" Description="Shared secret VU Studio sends as a Bearer token. Leave empty to have one generated on the first start: it is printed in the container log and kept in the data folder (token file)." Type="Variable" Display="always" Required="false" Mask="true"/>
+  <Config Name="Data folder" Target="/data" Default="/mnt/user/appdata/vustudio-agent" Mode="rw" Description="Keeps the generated token (file 'token'). Must be writable by uid 1654: run 'chown 1654 /mnt/user/appdata/vustudio-agent' if the log says the token could not be saved." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/vustudio-agent</Config>
   <Config Name="Display name" Target="VUSTUDIO_AGENT_NAME" Default="" Mode="" Description="Name shown in VU Studio. Default: the container host name." Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Unraid state files" Target="/host/emhttp" Default="/var/local/emhttp" Mode="ro,rslave" Description="Array state, parity check and disk temperatures. Mount the directory, not single files." Type="Path" Display="advanced" Required="false" Mask="false">/var/local/emhttp</Config>
   <Config Name="Unraid state path (inside the container)" Target="VUSTUDIO_AGENT_UNRAID_PATH" Default="/host/emhttp" Mode="" Description="Do not change unless you changed the container path above." Type="Variable" Display="advanced-hide" Required="false" Mask="false">/host/emhttp</Config>

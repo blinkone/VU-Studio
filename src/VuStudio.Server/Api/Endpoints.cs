@@ -37,6 +37,8 @@ public sealed record PushItem(string Id, double? Value, string? Text, string? Na
 
 public sealed record PushRequest(List<PushItem>? Sensors);
 
+public sealed record TrackRequest(string? Sensor);
+
 /// <summary>Maps every <c>/api</c> endpoint (see docs/api.md).</summary>
 public static partial class Endpoints
 {
@@ -242,16 +244,32 @@ public static partial class Endpoints
         {
             var end = to ?? DateTimeOffset.UtcNow;
             var start = from ?? end.AddHours(-24);
-            history.Track(sensor);
             return history.Query(sensor, start, end).Select(a => new { minute = a.Minute, min = a.Min, avg = a.Avg, max = a.Max, count = a.Count });
         });
 
         api.MapGet("/history/recent", (string sensor, int? seconds, HistoryRecorder history) =>
         {
-            history.Track(sensor);
             var window = TimeSpan.FromSeconds(Math.Clamp(seconds ?? 900, 10, 3600));
             return history.GetRecent(sensor, window).Select(p => new { time = p.Time, value = p.Value });
         });
+
+        api.MapPost("/history/track", Track);
+    }
+
+    /// <summary>
+    /// Starts recording a sensor that is not in the configured set (the UI calls it when it opens a chart). A POST,
+    /// so it carries the CSRF header; unknown sensors are refused and the set is capped (<see cref="HistoryRecorder.MaxTracked"/>).
+    /// </summary>
+    internal static IResult Track(TrackRequest request, HistoryRecorder history, SensorHub hub)
+    {
+        if (string.IsNullOrWhiteSpace(request.Sensor) || !hub.TryGet(request.Sensor, out _))
+        {
+            return Results.NotFound(new { error = "Unknown sensor." });
+        }
+
+        return history.Track(request.Sensor)
+            ? Results.NoContent()
+            : Results.Json(new { error = $"Too many sensors are being recorded (limit {HistoryRecorder.MaxTracked})." }, statusCode: StatusCodes.Status429TooManyRequests);
     }
 
     private static void MapAssets(RouteGroupBuilder api)
@@ -362,15 +380,24 @@ public static partial class Endpoints
         });
     }
 
+    /// <summary>
+    /// The push token is accepted only in <c>Authorization: Bearer</c>: a token in the query string ends up in logs,
+    /// proxies and browser history. Compared in constant time.
+    /// </summary>
+    internal static bool IsPushAuthorized(HttpRequest request, string? expected)
+    {
+        var header = request.Headers.Authorization.ToString();
+        var token = header.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ? header[7..].Trim() : "";
+        return !string.IsNullOrEmpty(expected) && !string.IsNullOrEmpty(token) &&
+               System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
+                   System.Text.Encoding.UTF8.GetBytes(token), System.Text.Encoding.UTF8.GetBytes(expected));
+    }
+
     private static void MapPush(RouteGroupBuilder api)
     {
         api.MapPost("/push", (HttpContext http, PushRequest request, ConfigStore config, PushGateway gateway) =>
         {
-            var expected = config.Current.Web.ApiToken;
-            var header = http.Request.Headers.Authorization.ToString();
-            var token = header.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ? header[7..].Trim() : http.Request.Query["token"].ToString();
-            if (string.IsNullOrEmpty(expected) || !System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
-                    System.Text.Encoding.UTF8.GetBytes(token), System.Text.Encoding.UTF8.GetBytes(expected)))
+            if (!IsPushAuthorized(http.Request, config.Current.Web.ApiToken))
             {
                 return Results.Unauthorized();
             }

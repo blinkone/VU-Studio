@@ -14,6 +14,9 @@ EnvironmentFile=-/etc/vustudio-agent.env
 Restart=always
 RestartSec=5
 DynamicUser=yes
+# A token generated when none is configured is kept in $STATE_DIRECTORY/token.
+StateDirectory=vustudio-agent
+StateDirectoryMode=0700
 # The agent only reads /proc and /sys.
 ProtectSystem=strict
 ProtectHome=yes

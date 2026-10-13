@@ -16,7 +16,7 @@ using VuStudio.Server.Security;
 using VuStudio.Server.Storage;
 
 var runtime = RuntimeOptions.Parse(args);
-var paths = AppPaths.Resolve(runtime.DataDirectory);
+var paths = AppPaths.Resolve(runtime.DataDirectory, secure: runtime.IsService);
 var configStore = new ConfigStore(paths.Config, NullLogger<ConfigStore>.Instance);
 var web = configStore.Current.Web;
 var port = runtime.Port ?? web.Port;
@@ -80,6 +80,8 @@ services.AddSingleton(runtime);
 services.AddSingleton(paths);
 services.AddSingleton(configStore);
 services.AddHttpClient();
+// Every client the providers get is marked, so the service can refuse a source pointed at its own API.
+services.ConfigureHttpClientDefaults(http => http.AddHttpMessageHandler(() => new OutboundMarkerHandler()));
 services.AddSingleton<SensorHub>();
 services.AddSingleton(_ => new VuStudio.Sources.Push.PushGateway());
 
@@ -124,6 +126,10 @@ services.AddHostedService<VuStudioHost>();
 services.AddHostedService<StarterBinder>();
 
 var app = builder.Build();
+foreach (var problem in paths.Problems)
+{
+    app.Logger.LogError("Data directory: {Problem}", problem);
+}
 
 app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(30) });
 app.UseMiddleware<SecurityMiddleware>();

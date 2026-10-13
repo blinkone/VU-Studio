@@ -86,6 +86,13 @@ public static class AgentApi
     {
         app.Use(async (context, next) =>
         {
+            if (!AgentSecurity.IsAllowedHost(context.Request.Host.Host, options.AllowedHosts))
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsync("Invalid Host header. Add the name to VUSTUDIO_AGENT_ALLOWED_HOSTS if it is yours.");
+                return;
+            }
+
             if (!IsAuthorized(options.Token, context.Request.Headers.Authorization.ToString()))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;

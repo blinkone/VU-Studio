@@ -56,9 +56,29 @@ export interface SeriesData {
 
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 
+const TRACK_EVERY_MS = 60_000;
+const lastTracked = new Map<string, number>();
+
+/**
+ * Asks the service to record a sensor that is not in the configured history set, so its chart fills in. Repeated
+ * at most once a minute per sensor (the service forgets on-demand sensors when the configuration changes). Errors
+ * (unknown sensor, limit reached) only mean the chart shows what is already recorded.
+ */
+export async function trackSensor(id: string): Promise<void> {
+  const now = Date.now();
+  if (now - (lastTracked.get(id) ?? 0) < TRACK_EVERY_MS) return;
+  lastTracked.set(id, now);
+  try {
+    await api.post('/api/history/track', { sensor: id });
+  } catch {
+    // Unknown sensor or limit reached: try again in a minute.
+  }
+}
+
 export async function fetchSeries(id: string, range: RangeKey): Promise<SeriesData> {
   const sensor = encodeURIComponent(id);
   const now = Date.now();
+  await trackSensor(id);
 
   if (range === '15m') {
     const rows = await api.get<HistoryPointDto[]>(`/api/history/recent?sensor=${sensor}&seconds=${RANGE_MS[range] / 1000}`);
@@ -73,6 +93,7 @@ export async function fetchSeries(id: string, range: RangeKey): Promise<SeriesDa
 
 /** Recent samples for the sensor drawer. */
 export async function fetchRecent(id: string, seconds: number): Promise<SeriesData> {
+  await trackSensor(id);
   const rows = await api.get<HistoryPointDto[]>(`/api/history/recent?sensor=${encodeURIComponent(id)}&seconds=${seconds}`);
   return { id, fetchedAt: Date.now(), resolutionMs: 1000, points: toRawPoints(rows) };
 }

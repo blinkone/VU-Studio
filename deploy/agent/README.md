@@ -2,7 +2,8 @@
 
 A small cross-platform HTTP service that exposes the sensors of **another machine** (Unraid, Steam Deck, Raspberry Pi, a second Linux or Windows PC) to the main VU Studio service. VU Studio polls it and shows the sensors next to the local ones, with the agent's name as the host.
 
-* Default port **5342**, plain HTTP, optional Bearer token.
+* Default port **5342**, plain HTTP, Bearer token. When the agent listens on the network (the default) and no token is configured, it generates one on the first start, saves it and logs it once in a box: copy it into VU Studio. Set `VUSTUDIO_AGENT_INSECURE=1` to run without a token on purpose.
+* Requests must use a known `Host`: an IP address, `localhost`, the machine name (also `.local`, `.lan`, `.home`), any `*.local` name, or a name listed in `VUSTUDIO_AGENT_ALLOWED_HOSTS`. This stops a web page from reading the sensors through DNS rebinding.
 * Linux: CPU load (total and per core) and frequency, load average, temperatures (hwmon and thermal zones), memory and swap, disk usage per mount, disk I/O rates, network rates per interface, uptime, batteries, AMD GPUs (`gpu_busy_percent`, VRAM, temperature, power; this covers the Steam Deck APU), NVIDIA GPUs through `nvidia-smi` when installed.
 * Unraid, when `/var/local/emhttp/var.ini` is readable: array state and capacity, parity check progress, speed and ETA, disk temperatures (last known value while a disk is spun down), per-disk usage and errors. SMART is never read, so disks are not woken up.
 * Windows: the basic subset of the `system` provider (CPU, memory, disks, network, uptime). For full hardware sensors install LibreHardwareMonitor or HWiNFO on that PC and use VU Studio's own providers.
@@ -10,7 +11,7 @@ A small cross-platform HTTP service that exposes the sensors of **another machin
 
 ## API
 
-All endpoints need `Authorization: Bearer <token>` when a token is configured.
+All endpoints need `Authorization: Bearer <token>` when a token is configured or generated.
 
 | Method | Path | Result |
 |---|---|---|
@@ -46,8 +47,11 @@ Environment variables (prefix `VUSTUDIO_AGENT_`) or command-line switches; the c
 | Variable | Switch | Default | |
 |---|---|---|---|
 | `VUSTUDIO_AGENT_PORT` | `--port` | `5342` | |
-| `VUSTUDIO_AGENT_TOKEN` | `--token` | none | Bearer token. Without one anyone on the network can read the sensors; the agent logs a warning. |
+| `VUSTUDIO_AGENT_TOKEN` | `--token` | generated | Bearer token. Without one (and with a non-loopback bind) a random token is generated on the first start and stored in the state file below. |
 | `VUSTUDIO_AGENT_TOKEN_FILE` | `--token-file` | none | Read the token from a file (Docker secrets). |
+| `VUSTUDIO_AGENT_DATA` | `--data` | see below | Directory for the generated token (`<dir>/token`). The Docker image sets `/data`. |
+| `VUSTUDIO_AGENT_INSECURE` | `--insecure` | `false` | `1` runs without a token even on the network. Anyone on the LAN can then read the sensors. |
+| `VUSTUDIO_AGENT_ALLOWED_HOSTS` | `--allowed-hosts` | none | Extra host names accepted in the `Host` header, comma separated (e.g. `tower.example.lan`). |
 | `VUSTUDIO_AGENT_NAME` | `--name` | host name | Name shown in VU Studio. |
 | `VUSTUDIO_AGENT_BIND` | `--bind` | `0.0.0.0` | `127.0.0.1` to keep it local. |
 | `VUSTUDIO_AGENT_MDNS` | `--mdns` | `true` | Advertise over mDNS. |
@@ -58,6 +62,8 @@ Environment variables (prefix `VUSTUDIO_AGENT_`) or command-line switches; the c
 
 In VU Studio add an **VU Studio Agent** source with the address (`http://host:5342`) and the token.
 
+The generated token is kept in `$VUSTUDIO_AGENT_DATA/token`; without that variable in `$STATE_DIRECTORY/token` (systemd `StateDirectory=`), else `$XDG_STATE_HOME/vustudio-agent/token` (`~/.local/state/vustudio-agent/token`), and on Windows `%LOCALAPPDATA%\vustudio-agent\token`. Delete the file to get a new token. If the file cannot be written, the agent logs an error and uses a new token at every start.
+
 ## Docker
 
 Build from the repository root:
@@ -66,17 +72,24 @@ Build from the repository root:
 docker build -f deploy/agent/Dockerfile -t vustudio-agent .
 ```
 
-Run it with host networking (needed for network rates and mDNS; a bridge network only shows the container's own interface). `/proc` and `/sys` inside a container already show the host's CPU, memory, disks and sensors; the explicit read-only mounts below make that dependable:
+What the collectors read inside a container:
+
+* `/proc/stat`, `/proc/meminfo`, `/proc/loadavg`, `/proc/diskstats`, `/proc/uptime`, `/proc/cpuinfo`: the container's own `/proc` already shows the host's values. **Do not** bind-mount `/proc` (`-v /proc:/proc` is rejected by runc).
+* `/sys/class/hwmon`, `/sys/class/drm`, `/sys/class/power_supply`, `/sys/devices/system/cpu`, `/sys/block`: Docker mounts the host's sysfs read-only by default; nothing to add.
+* Network rates (`/proc/net/dev` and `/sys/class/net`) are per network namespace: use `--network host`, which mDNS needs too.
+* The process count lists `/proc/<pid>`, which is per PID namespace: add `--pid host` to count the host's processes (optional).
+* Free space is read from the container's own mount table: mount the host filesystems you want to see (read-only).
 
 ```bash
 docker run -d --name vustudio-agent --restart unless-stopped \
-  --network host \
-  -e VUSTUDIO_AGENT_TOKEN=change-me \
+  --network host --pid host \
   -e VUSTUDIO_AGENT_NAME="My server" \
-  -v /proc:/proc:ro \
-  -v /sys:/sys:ro \
+  -v vustudio-agent-data:/data \
   vustudio-agent
+docker logs vustudio-agent   # shows the generated token once
 ```
+
+Set `-e VUSTUDIO_AGENT_TOKEN=...` instead if you prefer your own token. `/data` must be writable by the image's `app` user (uid 1654): a named volume is; for a bind mount run `chown 1654 <dir>` first.
 
 Unraid extras (array, parity, disk temperatures, free space of the array) need two more read-only mounts, plus the path variable:
 
@@ -90,7 +103,7 @@ Mount the `emhttp` directory, not single files: emhttpd rewrites them. No `--pri
 
 ## Unraid
 
-Copy `deploy/agent/unraid/vustudio-agent.xml` to `/boot/config/plugins/dockerMan/templates-user/` on the server (or submit it to Community Applications), then add the container from the Docker tab. The template uses host networking, the two mounts above and read-only root filesystem.
+Copy `deploy/agent/unraid/vustudio-agent.xml` to `/boot/config/plugins/dockerMan/templates-user/` on the server (or submit it to Community Applications), then add the container from the Docker tab. The template uses host networking, the host PID namespace, the two mounts above, a read-only root filesystem and `/mnt/user/appdata/vustudio-agent` as `/data`. Either type an access token in the template, or leave it empty and copy the generated token from the container log (it is kept in `appdata/vustudio-agent/token`; if the log says it could not be saved, run `chown 1654 /mnt/user/appdata/vustudio-agent`).
 
 ## Steam Deck
 
@@ -129,7 +142,7 @@ sudo cp deploy/agent/systemd/vustudio-agent.service /etc/systemd/system/
 sudo systemctl enable --now vustudio-agent
 ```
 
-The unit runs as a transient unprivileged user (`DynamicUser`) with a read-only view of the system. Everything the agent reads works without root; open TCP 5342 in the firewall if there is one.
+The unit runs as a transient unprivileged user (`DynamicUser`) with a read-only view of the system. Everything the agent reads works without root; open TCP 5342 in the firewall if there is one. If the env file sets no token, the agent generates one and keeps it in `/var/lib/vustudio-agent/token` (`StateDirectory=`); `journalctl -u vustudio-agent` shows it once.
 
 ## Windows
 

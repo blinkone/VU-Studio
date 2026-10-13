@@ -154,11 +154,24 @@ internal sealed class NvidiaSmiCollector : ISystemCollector
         sensors.Publish(id, v * scale);
     }
 
-    private static string? LocateBinary() => ExecutableLocator.Find(
-        "nvidia-smi",
-        extraDirectories: OperatingSystem.IsWindows()
-            ? [Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System)), @"C:\Program Files\NVIDIA Corporation\NVSMI"]
-            : ["/usr/bin", "/usr/local/bin", "/usr/local/nvidia/bin"]);
+    /// <summary>
+    /// Windows: only the absolute paths the NVIDIA driver installs to, never the PATH (the service runs as SYSTEM and a
+    /// writable PATH entry would let anyone plant an <c>nvidia-smi.exe</c>). Elsewhere: the exact name on the PATH,
+    /// then the usual directories.
+    /// </summary>
+    private static string? LocateBinary() => OperatingSystem.IsWindows()
+        ? ExecutableLocator.FirstExisting(WindowsCandidates(
+            Environment.GetFolderPath(Environment.SpecialFolder.System),
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)))
+        : ExecutableLocator.Find("nvidia-smi", extraDirectories: ["/usr/bin", "/usr/local/bin", "/usr/local/nvidia/bin"], usePathExt: false);
+
+    /// <summary><c>%SystemRoot%\System32\nvidia-smi.exe</c> and <c>%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe</c>.</summary>
+    internal static IReadOnlyList<string> WindowsCandidates(string systemDirectory, string programFiles) =>
+        new[]
+        {
+            string.IsNullOrEmpty(systemDirectory) ? "" : Path.Combine(systemDirectory, "nvidia-smi.exe"),
+            string.IsNullOrEmpty(programFiles) ? "" : Path.Combine(programFiles, "NVIDIA Corporation", "NVSMI", "nvidia-smi.exe"),
+        }.Where(p => p.Length > 0).ToList();
 
     private static Task<ProcessRunResult> RunBinary(string path, CancellationToken cancellationToken) =>
         ProcessRunner.RunAsync(new ProcessRunRequest(path) { Arguments = NvidiaSmi.Arguments, Timeout = TimeSpan.FromSeconds(5) }, cancellationToken);

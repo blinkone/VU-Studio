@@ -160,13 +160,24 @@ Root shape:
 
 * The service binds to loopback by default. LAN access (`allowLan`) is opt-in and requires a password: PBKDF2 hash, session cookie `HttpOnly; SameSite=Strict`.
 * **DNS-rebinding protection.** The `Host` header must be loopback, an IP literal, the machine's host names or a configured allow-list entry.
+* **Local trust.** A request is *local* (no login) only when it comes from a loopback address **and** its `Host` is `localhost`, `*.localhost`, `127.0.0.1` or `[::1]`. Machine names and `web.allowedHosts` entries are accepted but need the LAN login, so a rebound name never gets local trust.
+* Every `web.*` setting (LAN access, port, allowed hosts, password, API token) can only be changed by local requests.
+* A masked secret sent back by the UI is reused only if the source keeps its id, type and non-secret settings (table rows are matched by their non-secret columns); otherwise the user must type it again.
+* **SSRF to itself.** Every outgoing request of the service's sources carries an `X-VuStudio-Outbound` marker (per-process random value), and the service refuses requests that carry it. An HTTP JSON source whose settings were last changed from the LAN (`changedRemotely`, set by the service) also refuses loopback and link-local destinations, checked on the addresses actually connected to.
 * **CSRF protection.**
   * Every state-changing request needs the custom header `X-VuStudio: 1`, which forces a CORS preflight that the server never grants. A matching `Origin` header is also accepted.
   * WebSocket upgrades must carry a same-origin `Origin` or come from a non-browser local client.
-* The push API (`/api/push`) requires `Authorization: Bearer <apiToken>`.
+* The push API (`/api/push`) requires the `Authorization: Bearer <apiToken>` header (never a query parameter).
+* On-demand history recording is a `POST` (`/api/history/track`) limited to existing sensors and capped at 2000.
 * Scripts are executed by the **tray app in the user's session**, never by the LocalSystem service.
 * Script definitions can only be changed from loopback requests.
-* Secrets in the config (Home Assistant tokens, MQTT passwords) are stored in clear text inside `%ProgramData%`, whose ACL restricts it to Administrators and SYSTEM. DPAPI is planned.
+* Secrets in the config (Home Assistant tokens, MQTT passwords) are stored in clear text in `%ProgramData%\VU Studio`. That folder is protected twice:
+  * the installer creates it with `admins-full system-full` permissions (its `[Dirs]` entry), and
+  * the service, when it starts as a Windows service, sets its DACL to SYSTEM and Administrators full control only, protected from inheritance (nothing from `%ProgramData%`, where Users may create and write), with Administrators as owner. Files inside inherit that DACL.
+  * When started as a service, the data folder and its `logs` and `assets` subfolders are refused if they are reparse points (symbolic links, junctions): the link is removed, the folder recreated and an error logged.
+  * Standard users therefore cannot read `config.json`. The tray falls back to the default port 5341 (or `VUSTUDIO_PORT` / `--port`) when it cannot read `web.port`.
+  * DPAPI is planned.
+* `nvidia-smi` is started from absolute well-known paths on Windows (`System32`, `Program Files\NVIDIA Corporation\NVSMI`), never found through `PATH`.
 
 ## 7. Threading
 

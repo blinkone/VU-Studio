@@ -8,7 +8,10 @@ builder.Configuration.AddEnvironmentVariables("VUSTUDIO_AGENT_");
 // Command-line switches win over the environment.
 builder.Configuration.AddCommandLine(args);
 
-var options = AgentOptions.From(builder.Configuration);
+var configured = AgentOptions.From(builder.Configuration);
+// Reachable from the network without a token: generate one (unless VUSTUDIO_AGENT_INSECURE=1).
+var tokenOutcome = AgentSecurity.EnsureToken(configured, AgentSecurity.TokenFile(configured));
+var options = tokenOutcome.Options;
 builder.WebHost.UseUrls($"http://{options.Bind}:{options.Port}");
 builder.Logging.AddSimpleConsole(c => c.SingleLine = true);
 builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
@@ -26,9 +29,31 @@ if (options.Mdns)
 }
 
 var app = builder.Build();
-if (options.Token is null)
+switch (tokenOutcome.Source)
 {
-    app.Logger.LogWarning("No token configured: anyone on the network can read this machine's sensors. Set VUSTUDIO_AGENT_TOKEN to require one");
+    case TokenSource.Insecure:
+        app.Logger.LogWarning("VUSTUDIO_AGENT_INSECURE is set: no token, anyone on the network can read this machine's sensors");
+        break;
+    case TokenSource.Generated:
+        app.Logger.LogWarning(
+            "\n==================================================================\n" +
+            " No token was configured, so one was generated (saved in {Path}).\n" +
+            " Enter it in VU Studio as the agent's access token:\n\n    {Token}\n" +
+            "==================================================================",
+            tokenOutcome.Path,
+            options.Token);
+        break;
+    case TokenSource.Ephemeral:
+        app.Logger.LogError(
+            "No token was configured and the generated one could not be saved in {Path} ({Error}); it changes at every start. " +
+            "Set VUSTUDIO_AGENT_TOKEN or make the directory writable. Token for this run: {Token}",
+            tokenOutcome.Path,
+            tokenOutcome.Error,
+            options.Token);
+        break;
+    case TokenSource.Stored:
+        app.Logger.LogInformation("Using the generated token stored in {Path}", tokenOutcome.Path);
+        break;
 }
 
 AgentApi.Map(app, options, app.Services.GetRequiredService<SensorHub>(), app.Services.GetRequiredService<TimeProvider>());

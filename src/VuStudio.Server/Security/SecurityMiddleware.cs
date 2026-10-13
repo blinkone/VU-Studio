@@ -1,5 +1,6 @@
 using System.Net;
 using VuStudio.Core.Config;
+using VuStudio.Core.Providers;
 
 namespace VuStudio.Server.Security;
 
@@ -7,7 +8,13 @@ namespace VuStudio.Server.Security;
 /// Request gatekeeper:
 /// <list type="bullet">
 /// <item>DNS-rebinding protection: the Host header must be loopback, an IP literal, a machine name or an allowed host.</item>
-/// <item>LAN clients need LAN access enabled and a login session (except for the login itself, the static UI and the push API).</item>
+/// <item>A request is <em>local</em> (trusted without login) only when it comes from a loopback address <b>and</b> its Host is
+/// <c>localhost</c>, <c>*.localhost</c>, <c>127.0.0.1</c> or <c>[::1]</c>. Machine names and <c>web.allowedHosts</c> are
+/// accepted Hosts but never confer local trust: a rebound name could otherwise reach the API without the LAN login.</item>
+/// <item>Everything else is a LAN request: it needs LAN access enabled and a login session (except for the login itself,
+/// the static UI and the push API).</item>
+/// <item>Requests carrying <see cref="OutboundMarker.HeaderName"/> come from this process's own outgoing HTTP clients
+/// (a provider pointed at the service itself) and are refused.</item>
 /// <item>CSRF protection: state-changing requests need <c>X-VuStudio: 1</c> and, when present, a same-origin <c>Origin</c>.</item>
 /// <item>WebSocket upgrades from browsers must be same-origin.</item>
 /// </list>
@@ -23,8 +30,15 @@ public sealed class SecurityMiddleware(RequestDelegate next, ConfigStore config,
     {
         var request = context.Request;
         var remote = context.Connection.RemoteIpAddress;
-        var local = remote is null || IPAddress.IsLoopback(remote);
+        var local = IsLocalRequest(remote, request.Host.Host);
         context.Items[LocalItem] = local;
+
+        if (request.Headers.ContainsKey(OutboundMarker.HeaderName))
+        {
+            logger.LogWarning("Rejected a request made by one of the service's own sources ({Path})", request.Path);
+            await Reject(context, StatusCodes.Status403Forbidden, "A source cannot call the VU Studio API.");
+            return;
+        }
 
         var web = config.Current.Web;
         if (!IsAllowedHost(request.Host.Host, web))
@@ -75,7 +89,28 @@ public sealed class SecurityMiddleware(RequestDelegate next, ConfigStore config,
 
     public static bool IsLocal(HttpContext context) => context.Items.TryGetValue(LocalItem, out var v) && v is true;
 
-    private static bool IsAllowedHost(string host, WebSettings web)
+    /// <summary>
+    /// Local trust: a loopback peer (or no network peer at all, e.g. an in-process test server) that addressed the
+    /// service by a loopback name. <paramref name="host"/> is the Host header without the port.
+    /// </summary>
+    public static bool IsLocalRequest(IPAddress? remote, string? host) =>
+        (remote is null || IPAddress.IsLoopback(remote)) && IsLoopbackHost(host);
+
+    /// <summary><c>localhost</c>, <c>*.localhost</c>, <c>127.0.0.1</c> or <c>[::1]</c> (the port is not part of <paramref name="host"/>).</summary>
+    public static bool IsLoopbackHost(string? host)
+    {
+        if (string.IsNullOrEmpty(host))
+        {
+            return false;
+        }
+
+        var h = host.ToLowerInvariant();
+        return h is "localhost" or "127.0.0.1" or "[::1]" or "::1" ||
+               (h.EndsWith(".localhost", StringComparison.Ordinal) && h.Length > ".localhost".Length);
+    }
+
+    /// <summary>Hosts accepted at all (DNS-rebinding protection). Being accepted does not make a request local.</summary>
+    public static bool IsAllowedHost(string host, WebSettings web)
     {
         if (string.IsNullOrEmpty(host))
         {

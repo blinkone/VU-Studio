@@ -39,13 +39,25 @@ public sealed class ConfigService(ConfigStore store, ProviderManager providers)
         var current = store.Current;
         var currentProviders = current.Providers.ToDictionary(p => p.Id, StringComparer.Ordinal);
 
+        var secretErrors = new List<string>();
         foreach (var instance in incoming.Providers)
         {
-            if (currentProviders.TryGetValue(instance.Id, out var previous) && previous.Type == instance.Type &&
-                providers.GetFactory(instance.Type)?.Descriptor is { } descriptor)
+            currentProviders.TryGetValue(instance.Id, out var previous);
+            var sameType = previous is not null && previous.Type == instance.Type;
+            if (providers.GetFactory(instance.Type)?.Descriptor is { } descriptor)
             {
-                Restore(instance.Settings, previous.Settings, descriptor.Settings);
+                RestoreSecrets(instance, sameType ? previous : null, descriptor, secretErrors);
             }
+
+            // Who changed the provider last is decided here, never by the client.
+            instance.ChangedRemotely = sameType && JsonNode.DeepEquals(instance.Settings, previous!.Settings)
+                ? previous.ChangedRemotely
+                : !local;
+        }
+
+        if (secretErrors.Count > 0)
+        {
+            throw new ConfigValidationException(secretErrors);
         }
 
         // The password is changed only through /api/auth/password.
@@ -160,6 +172,14 @@ public sealed class ConfigService(ConfigStore store, ProviderManager providers)
 
     private void EnforceLocalOnly(AppConfig current, AppConfig incoming)
     {
+        // LAN access, the port, the accepted host names, the password and the API token decide who can reach the
+        // service at all: only someone sitting at this PC may change them.
+        if (!SameWebSettings(current.Web, incoming.Web))
+        {
+            throw new ConfigForbiddenException(
+                "Web access settings (LAN access, port, allowed host names, password and API token) can only be changed on this PC.");
+        }
+
         var localOnlyTypes = providers.Descriptors.Where(d => d.LocalConfigOnly).Select(d => d.Type).ToHashSet(StringComparer.Ordinal);
         string Fingerprint(AppConfig c) => JsonSerializer.Serialize(
             c.Providers.Where(p => localOnlyTypes.Contains(p.Type)).OrderBy(p => p.Id, StringComparer.Ordinal),
@@ -170,6 +190,10 @@ public sealed class ConfigService(ConfigStore store, ProviderManager providers)
             throw new ConfigForbiddenException("Scripts and other local-only sources can only be changed on this PC.");
         }
     }
+
+    /// <summary>Every <c>web.*</c> setting, compared as JSON so new properties are covered automatically.</summary>
+    internal static bool SameWebSettings(WebSettings a, WebSettings b) =>
+        JsonSerializer.Serialize(a, Json.Compact) == JsonSerializer.Serialize(b, Json.Compact);
 
     private static void Mask(JsonObject settings, IReadOnlyList<SettingField> fields)
     {
@@ -194,32 +218,115 @@ public sealed class ConfigService(ConfigStore store, ProviderManager providers)
         }
     }
 
-    private static void Restore(JsonObject incoming, JsonObject previous, IReadOnlyList<SettingField> fields)
+    /// <summary>
+    /// Puts the stored value back in place of every <see cref="SecretPlaceholder"/>, but only when the secret would go
+    /// to the same place as before: same provider id and type, and the same values for every non-secret setting that
+    /// could redirect it (see <see cref="IsCompared"/>). Table rows are matched by their non-secret columns, not by
+    /// position. Anything else is reported in <paramref name="errors"/> so the user re-enters the secret.
+    /// </summary>
+    internal static void RestoreSecrets(ProviderInstanceConfig instance, ProviderInstanceConfig? previous, ProviderDescriptor descriptor, List<string> errors)
     {
-        foreach (var field in fields)
+        var label = instance.Name is { Length: > 0 } n ? n : instance.Id;
+        var scopeUnchanged = previous is not null && SameScope(instance.Settings, previous.Settings, descriptor.Settings);
+        foreach (var field in descriptor.Settings)
         {
-            if (!incoming.TryGetPropertyValue(field.Key, out var node) || node is null)
+            if (!instance.Settings.TryGetPropertyValue(field.Key, out var node) || node is null)
             {
                 continue;
             }
 
-            if (field.Kind == SettingKind.Secret && node is JsonValue v && v.TryGetValue<string>(out var s) && s == SecretPlaceholder)
+            if (field.Kind == SettingKind.Secret && IsPlaceholder(node))
             {
-                incoming[field.Key] = previous.TryGetPropertyValue(field.Key, out var old) ? old?.DeepClone() : null;
+                if (scopeUnchanged && previous!.Settings.TryGetPropertyValue(field.Key, out var old) && old is not null && !IsEmpty(old))
+                {
+                    instance.Settings[field.Key] = old.DeepClone();
+                }
+                else
+                {
+                    errors.Add($"Source '{label}': re-enter the secret '{field.Label.En}' (the address or another setting it depends on changed).");
+                }
             }
             else if (field.Kind == SettingKind.Table && field.Columns is { } columns && node is JsonArray rows &&
-                     previous.TryGetPropertyValue(field.Key, out var oldNode) && oldNode is JsonArray oldRows)
+                     columns.Any(c => c.Kind == SettingKind.Secret))
             {
-                for (var i = 0; i < rows.Count; i++)
+                var available = new List<JsonObject>();
+                if (scopeUnchanged && previous!.Settings.TryGetPropertyValue(field.Key, out var oldNode) && oldNode is JsonArray oldRows)
                 {
-                    if (rows[i] is JsonObject row && i < oldRows.Count && oldRows[i] is JsonObject oldRow)
+                    available.AddRange(oldRows.OfType<JsonObject>());
+                }
+
+                var rowNumber = 0;
+                foreach (var row in rows.OfType<JsonObject>())
+                {
+                    rowNumber++;
+                    if (!columns.Any(c => c.Kind == SettingKind.Secret && row.TryGetPropertyValue(c.Key, out var v) && v is not null && IsPlaceholder(v)))
                     {
-                        Restore(row, oldRow, columns);
+                        continue;
+                    }
+
+                    var match = available.FirstOrDefault(old => SameScope(row, old, columns));
+                    if (match is not null)
+                    {
+                        available.Remove(match); // two identical rows each take their own stored secret
+                    }
+
+                    foreach (var column in columns.Where(c => c.Kind == SettingKind.Secret))
+                    {
+                        if (!row.TryGetPropertyValue(column.Key, out var value) || value is null || !IsPlaceholder(value))
+                        {
+                            continue;
+                        }
+
+                        if (match is not null && match.TryGetPropertyValue(column.Key, out var old) && old is not null && !IsEmpty(old))
+                        {
+                            row[column.Key] = old.DeepClone();
+                        }
+                        else
+                        {
+                            errors.Add($"Source '{label}', {field.Label.En} row {rowNumber}: re-enter the secret '{column.Label.En}'.");
+                        }
                     }
                 }
             }
         }
     }
+
+    /// <summary>
+    /// Settings compared before a stored secret is reused: every non-secret value (text, address, number, switch,
+    /// choice, multi-line text). Timing fields, lists and tables (sensor selections; rows with secrets are matched on
+    /// their own) cannot send a top-level secret anywhere else, so changing them does not force the user to re-enter it.
+    /// </summary>
+    internal static bool IsCompared(SettingField field) => field.Kind switch
+    {
+        SettingKind.Secret or SettingKind.Seconds or SettingKind.TextList or SettingKind.Table => false,
+        _ => true,
+    };
+
+    private static bool SameScope(JsonObject a, JsonObject b, IReadOnlyList<SettingField> fields) =>
+        fields.Where(IsCompared).All(f => SameValue(Effective(a, f), Effective(b, f)));
+
+    private static JsonNode? Effective(JsonObject settings, SettingField field) =>
+        settings.TryGetPropertyValue(field.Key, out var node) && node is not null ? node : field.Default;
+
+    private static bool SameValue(JsonNode? a, JsonNode? b)
+    {
+        if (a is JsonValue va && b is JsonValue vb && va.TryGetValue<double>(out var da) && vb.TryGetValue<double>(out var db))
+        {
+            return da.Equals(db);
+        }
+
+        if (a is JsonValue sa && b is JsonValue sb && sa.TryGetValue<string>(out var ta) && sb.TryGetValue<string>(out var tb))
+        {
+            return string.Equals(ta.Trim(), tb.Trim(), StringComparison.Ordinal);
+        }
+
+        return JsonNode.DeepEquals(a, b) || (IsBlank(a) && IsBlank(b));
+    }
+
+    private static bool IsBlank(JsonNode? node) => node is null || IsEmpty(node);
+
+    private static bool IsPlaceholder(JsonNode node) =>
+        node is JsonValue v && v.TryGetValue<string>(out var s) && s == SecretPlaceholder;
 
     private static bool IsEmpty(JsonNode node) =>
         node is JsonValue v && v.TryGetValue<string>(out var s) && string.IsNullOrEmpty(s);

@@ -109,6 +109,14 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#StageDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 
+[Dirs]
+; The data folder holds config.json (with source secrets) and decides what the LocalSystem service runs.
+; Inno Setup can only add ACEs, not turn off the inheritance from %ProgramData% (where Users may create
+; and write). The service therefore also sets a protected DACL (SYSTEM + Administrators only, no
+; inheritance, Administrators as owner) every time it starts; see src\VuStudio.Server\Hosting\AppPaths.cs.
+; Kept on uninstall: the uninstaller asks before deleting user data.
+Name: "{commonappdata}\VU Studio"; Permissions: admins-full system-full; Flags: uninsneveruninstall
+
 [InstallDelete]
 ; Vite emits content-hashed file names, so drop the previous web UI before copying the new one.
 Type: filesandordirs; Name: "{app}\wwwroot"

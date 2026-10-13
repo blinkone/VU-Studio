@@ -21,8 +21,21 @@ public sealed record AgentOptions
     /// <summary>Address to listen on. <c>0.0.0.0</c> by default; <c>127.0.0.1</c> to keep the agent local.</summary>
     public string Bind { get; init; } = "0.0.0.0";
 
-    /// <summary>When set, every endpoint requires <c>Authorization: Bearer &lt;token&gt;</c>.</summary>
+    /// <summary>
+    /// When set, every endpoint requires <c>Authorization: Bearer &lt;token&gt;</c>. When the agent listens on a
+    /// non-loopback address and none is configured, one is generated and kept in <see cref="AgentSecurity.TokenFile"/>
+    /// (unless <see cref="Insecure"/>).
+    /// </summary>
     public string? Token { get; init; }
+
+    /// <summary><c>VUSTUDIO_AGENT_INSECURE=1</c>: explicitly run without a token on the network.</summary>
+    public bool Insecure { get; init; }
+
+    /// <summary>Where the generated token is kept (<c>VUSTUDIO_AGENT_DATA</c>, e.g. <c>/data</c> in Docker). See <see cref="AgentSecurity.TokenFile"/>.</summary>
+    public string? DataDirectory { get; init; }
+
+    /// <summary>Extra names accepted in the Host header (<c>VUSTUDIO_AGENT_ALLOWED_HOSTS</c>, comma separated).</summary>
+    public IReadOnlyList<string> AllowedHosts { get; init; } = [];
 
     /// <summary>Advertise the agent over mDNS.</summary>
     public bool Mdns { get; init; } = true;
@@ -64,6 +77,10 @@ public sealed record AgentOptions
             PerCore = Bool(configuration, "per-core", defaults.PerCore),
             NvidiaSmi = Bool(configuration, "nvidia-smi", defaults.NvidiaSmi),
             UnraidPath = Text(configuration, "unraid-path") ?? defaults.UnraidPath,
+            Insecure = Bool(configuration, "insecure", false),
+            DataDirectory = Text(configuration, "data"),
+            AllowedHosts = (Text(configuration, "allowed-hosts") ?? "")
+                .Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
         };
     }
 

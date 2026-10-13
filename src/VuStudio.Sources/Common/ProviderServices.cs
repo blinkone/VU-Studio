@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using VuStudio.Core.Providers;
 
 namespace VuStudio.Sources.Common;
 
@@ -26,6 +27,7 @@ internal static class ProviderServices
     /// <summary>
     /// An <see cref="HttpClient"/> from the factory, else a registered client, else a process-wide shared one.
     /// Callers must not dispose it and must not rely on <see cref="HttpClient.Timeout"/>; enforce timeouts per request.
+    /// The service registers <see cref="OutboundMarkerHandler"/> on every factory client; the fallback client has it too.
     /// </summary>
     public static HttpClient Http(IServiceProvider services) =>
         services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientName)
@@ -39,6 +41,6 @@ internal static class ProviderServices
             PooledConnectionLifetime = TimeSpan.FromMinutes(5),
             AutomaticDecompression = DecompressionMethods.All,
         };
-        return new HttpClient(handler) { Timeout = Timeout.InfiniteTimeSpan };
+        return new HttpClient(OutboundMarker.Wrap(handler)) { Timeout = Timeout.InfiniteTimeSpan };
     }
 }

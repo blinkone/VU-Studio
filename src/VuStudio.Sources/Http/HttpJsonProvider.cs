@@ -29,13 +29,16 @@ internal sealed class HttpJsonProvider : PollingSensorProvider
     private readonly double _staleAfter;
     private readonly List<(FieldSpec Field, JsonPathLite Path)> _fields = [];
     private readonly HashSet<string> _discovered = new(StringComparer.Ordinal);
+    private readonly IDisposable? _owner;
     private SensorRegistry? _sensors;
 
-    public HttpJsonProvider(string id, HttpJsonOptions options, HttpClient client, string? deviceLabel, ILogger logger)
+    /// <param name="owner">Disposed with the provider: a private client, <c>null</c> for the shared one.</param>
+    public HttpJsonProvider(string id, HttpJsonOptions options, HttpClient client, string? deviceLabel, ILogger logger, IDisposable? owner = null)
         : base(id, options.Interval, logger)
     {
         _options = options;
         _client = client;
+        _owner = owner;
         _device = deviceLabel ?? options.Url?.Host;
         _staleAfter = SensorHints.StaleAfterSeconds(options.Interval);
         foreach (var field in options.Fields)
@@ -179,6 +182,14 @@ internal sealed class HttpJsonProvider : PollingSensorProvider
             request.Headers.TryAddWithoutValidation(header.Name, header.Value);
         }
 
+        // Also set here (not only by the client's handler) so that no user header can remove or fake it.
+        OutboundMarker.Apply(request);
         return request;
+    }
+
+    public override ValueTask DisposeAsync()
+    {
+        _owner?.Dispose();
+        return base.DisposeAsync();
     }
 }

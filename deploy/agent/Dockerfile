@@ -15,9 +15,14 @@ RUN dotnet publish src/VuStudio.Agent/VuStudio.Agent.csproj -c Release --no-rest
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 WORKDIR /app
 COPY --from=build /app .
-# Inside a container /proc and /sys already show the host's CPU, memory, disks and sensors.
-# Network rates need --network host (otherwise only the container's own interface is visible).
+# The container's own /proc and /sys already show the host's CPU, memory, load, disk I/O, uptime and
+# hwmon sensors; do not bind-mount /proc (runc refuses it). Network rates and mDNS need --network host,
+# the process count needs --pid host, free space needs the host's mounts (e.g. -v /mnt:/mnt:ro).
 ENV VUSTUDIO_AGENT_PORT=5342
+# A token generated on first start (when none is configured) is kept in /data/token.
+ENV VUSTUDIO_AGENT_DATA=/data
+RUN mkdir -p /data && chown app:app /data
+VOLUME /data
 EXPOSE 5342
 USER app
 ENTRYPOINT ["dotnet", "vustudio-agent.dll"]

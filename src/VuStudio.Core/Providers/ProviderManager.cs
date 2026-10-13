@@ -320,7 +320,7 @@ public sealed partial class ProviderManager : IAsyncDisposable
     }
 
     private static string Fingerprint(ProviderInstanceConfig config) =>
-        $"{config.Type}|{config.Enabled}|{config.Name}|{config.Settings.ToJsonString(new JsonSerializerOptions { WriteIndented = false })}";
+        $"{config.Type}|{config.Enabled}|{config.Name}|{config.ChangedRemotely}|{config.Settings.ToJsonString(new JsonSerializerOptions { WriteIndented = false })}";
 
     private sealed class Running(string id, string fingerprint, CancellationTokenSource cts)
     {

@@ -75,11 +75,19 @@ public sealed class HttpJsonProviderFactory : IProviderFactory
         ],
     };
 
-    public ISensorProvider Create(ProviderInstanceConfig config, IServiceProvider services) =>
-        new HttpJsonProvider(
+    /// <summary>
+    /// A source last changed from the LAN gets a private client that refuses loopback and link-local destinations
+    /// (see <see cref="DestinationGuard"/>); one set up on this PC may call local services.
+    /// </summary>
+    public ISensorProvider Create(ProviderInstanceConfig config, IServiceProvider services)
+    {
+        var restricted = config.ChangedRemotely ? DestinationGuard.CreateRestrictedClient() : null;
+        return new HttpJsonProvider(
             config.Id,
             HttpJsonOptions.From(new ProviderSettings(config.Settings, Descriptor)),
-            ProviderServices.Http(services),
+            restricted ?? ProviderServices.Http(services),
             string.IsNullOrWhiteSpace(config.Name) ? null : config.Name.Trim(),
-            ProviderServices.Logger<HttpJsonProvider>(services));
+            ProviderServices.Logger<HttpJsonProvider>(services),
+            restricted);
+    }
 }
