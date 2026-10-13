@@ -1,1 +1,1 @@
-# VuDials
+# VU-Studio
