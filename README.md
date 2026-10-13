@@ -75,6 +75,12 @@ dotnet run --project src/VuStudio.Server -- --simulate 4
 
 Windows packages (installer and Agent binaries) are built by `build/publish.ps1` / `build/publish.sh` and, on a `v*` tag, by the release workflow.
 
+## Acknowledgements and prior work
+
+* **[VU-Server](https://github.com/SasaKaranovic/VU-Server)** by Saša Karanović (Karanović Research) is the official software for the VU1 and the reference this project is based on. I learned the hub's serial protocol by reading its source code (see [the protocol notes](docs/vu1-protocol.md)). VU Studio is a new implementation in C# and TypeScript: it does not include VU-Server's code, and it is not a fork. Thank you for keeping it open.
+* The VU1 dials and hub are designed by Streacom and Karanović Research. VU Studio is an independent community project and is not affiliated with either.
+* VU Studio is not the first app for the VU1 and does not claim to be. If you know of an existing project whose work should be credited here, please [open an issue](https://github.com/blinkone/VU-Studio/issues) and I will add it.
+
 ## License
 
 VU Studio is free software, licensed under the [GNU General Public License v3.0 or later](LICENSE).
