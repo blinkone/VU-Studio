@@ -93,6 +93,7 @@ Client → server: `{ "type": "subscribe", "sensors": "*" }` or `{ "type": "subs
 | GET | `/api/sensors` | `[{ id, name, device, category, kind, unit, valueKind, min, max, icon, host, providerId, value, text, updated, stale }]` |
 | GET | `/api/providers` | `{ types: [ProviderDescriptor & { supported }], status: [ProviderStatusInfo] }` |
 | GET | `/api/units/{unit}` | display units compatible with a canonical unit |
+| GET | `/api/discovery/agents` | `{ agents: [{ name, host, port, addresses, version, alreadyAdded }], message }` (`message` is omitted when null) — VU Studio Agents found over mDNS (`_vustudio._tcp`). `host` is the first address; `alreadyAdded` is true when an `agent` source already points at one of the addresses on that port. The first call browses and waits about 3 s; the result is then cached and refreshed in the background at most every 60 s. When mDNS cannot start (no multicast) the list is empty and `message` says why. |
 
 ## Faces, themes and assets
 

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Badge, Button, Card, CloseButton, Group, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
+import { ActionIcon, Alert, Badge, Button, Card, CloseButton, Group, Loader, SimpleGrid, Skeleton, Stack, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconPlugConnected, IconSearch } from '@tabler/icons-react';
+import { IconAlertCircle, IconPlugConnected, IconPlus, IconRadar, IconRefresh, IconSearch } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
-import { useInfo, useProviders, useSensors } from '@/api/queries';
-import type { ProviderGroup, ProviderInstanceConfig, ProviderTypeDto } from '@/api/types';
+import { useDiscoveredAgents, useInfo, useProviders, useSensors } from '@/api/queries';
+import type { DiscoveredAgentDto, ProviderGroup, ProviderInstanceConfig, ProviderTypeDto } from '@/api/types';
 import { localized } from '@/i18n';
 import { useConfigDraft } from '@/state/configDraft';
 import { DeleteSourceModal } from './DeleteSourceModal';
@@ -26,6 +26,7 @@ export function SourcesView() {
   const providers = useProviders();
   const sensors = useSensors();
   const info = useInfo();
+  const discovered = useDiscoveredAgents();
   const draft = useConfigDraft((s) => s.draft);
   const base = useConfigDraft((s) => s.base);
   const update = useConfigDraft((s) => s.update);
@@ -114,6 +115,15 @@ export function SourcesView() {
     instance.name?.trim() || localized(typeMap.get(instance.type)?.descriptor.name, i18n.language) || instance.type;
 
   const usage = useMemo(() => (deleting && draft ? sourceUsage(draft.profiles, deleting.id) : null), [deleting, draft]);
+
+  // ------------------------------------------------------------------ discovery
+
+  const agentType = typeMap.get('agent');
+  const foundAgents = (discovered.data?.agents ?? []).filter((agent) => !agent.alreadyAdded);
+  const addDiscovered = (agent: DiscoveredAgentDto) => {
+    const host = agent.host.includes(':') ? `[${agent.host}]` : agent.host;
+    openEditor({ mode: 'add', type: 'agent', prefill: { name: agent.name, settings: { url: `http://${host}:${agent.port}` } } });
+  };
 
   // ------------------------------------------------------------------ gallery
 
@@ -214,6 +224,77 @@ export function SourcesView() {
           )}
         </Stack>
       </section>
+
+      {/* ------------------------------------------------------------ found on the network */}
+      {agentType?.supported && !agentType.descriptor.localConfigOnly && (
+        <section aria-labelledby="sources-found">
+          <Stack gap="sm">
+            <Group justify="space-between" align="flex-end" gap="md" wrap="nowrap">
+              <div>
+                <Title order={3} id="sources-found">
+                  {t('discovery.title')}
+                </Title>
+                <Text size="sm" c="dimmed">
+                  {t('discovery.subtitle')}
+                </Text>
+              </div>
+              <Tooltip label={t('discovery.refresh')}>
+                <ActionIcon
+                  variant="default"
+                  size="lg"
+                  aria-label={t('discovery.refresh')}
+                  disabled={discovered.isFetching}
+                  onClick={() => void discovered.refetch()}
+                >
+                  {discovered.isFetching ? <Loader size={16} /> : <IconRefresh size={18} />}
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+
+            {discovered.isLoading ? (
+              <Text size="sm" c="dimmed" role="status">
+                {t('discovery.searching')}
+              </Text>
+            ) : discovered.isError ? (
+              <Text size="sm" c="dimmed">
+                {t('discovery.error')}
+              </Text>
+            ) : foundAgents.length === 0 ? (
+              <Text size="sm" c="dimmed">
+                {discovered.data?.message
+                  ? t('discovery.unavailable')
+                  : (discovered.data?.agents.length ?? 0) > 0
+                    ? t('discovery.allAdded')
+                    : t('discovery.empty')}
+              </Text>
+            ) : (
+              <SimpleGrid cols={{ base: 1, md: 2, xl: 3 }}>
+                {foundAgents.map((agent) => (
+                  <Card key={`${agent.host}:${agent.port}`} padding="md">
+                    <Group justify="space-between" wrap="nowrap" gap="sm">
+                      <Group gap="sm" wrap="nowrap" style={{ minWidth: 0 }}>
+                        <IconRadar size={22} stroke={1.5} aria-hidden style={{ flexShrink: 0 }} />
+                        <div style={{ minWidth: 0 }}>
+                          <Text fw={600} truncate>
+                            {agent.name}
+                          </Text>
+                          <Text size="xs" c="dimmed" truncate>
+                            {agent.host}:{agent.port}
+                            {agent.version ? ` · ${t('discovery.version', { version: agent.version })}` : ''}
+                          </Text>
+                        </div>
+                      </Group>
+                      <Button size="xs" leftSection={<IconPlus size={14} />} onClick={() => addDiscovered(agent)}>
+                        {t('discovery.add')}
+                      </Button>
+                    </Group>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            )}
+          </Stack>
+        </section>
+      )}
 
       {/* ------------------------------------------------------------ add a source */}
       <section aria-labelledby="sources-add">

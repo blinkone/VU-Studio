@@ -122,6 +122,10 @@ services.AddSingleton<LiveHub>();
 services.AddSingleton<StateBuilder>();
 services.AddSingleton<ConfigService>();
 services.AddSingleton<AuthSessions>();
+// Lazy: nothing browses the network until the Sources page asks for agents.
+services.AddSingleton<VuStudio.Sources.Remote.IAgentDiscovery>(sp =>
+    new VuStudio.Sources.Remote.MdnsAgentDiscovery(sp.GetRequiredService<ILogger<VuStudio.Sources.Remote.MdnsAgentDiscovery>>()));
+services.AddSingleton<AgentDiscoveryService>();
 services.AddHostedService<VuStudioHost>();
 services.AddHostedService<StarterBinder>();
 

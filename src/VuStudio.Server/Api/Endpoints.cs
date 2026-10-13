@@ -67,6 +67,7 @@ public static partial class Endpoints
         MapAssets(api);
         MapAuth(api);
         MapPush(api);
+        MapDiscovery(api);
 
         app.Map("/api/live", async (HttpContext http, LiveHub hub) =>
         {
@@ -398,6 +399,28 @@ public static partial class Endpoints
         return !string.IsNullOrEmpty(expected) && !string.IsNullOrEmpty(token) &&
                System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
                    System.Text.Encoding.UTF8.GetBytes(token), System.Text.Encoding.UTF8.GetBytes(expected));
+    }
+
+    internal static void MapDiscovery(RouteGroupBuilder api)
+    {
+        api.MapGet("/discovery/agents", async (AgentDiscoveryService discovery, ConfigStore config, CancellationToken ct) =>
+        {
+            var result = await discovery.GetAsync(ct);
+            var added = await AgentDiscoveryService.AddedEndpointsAsync(config.Current.Providers, ct);
+            return new
+            {
+                agents = result.Agents.Select(a => new
+                {
+                    name = a.Name,
+                    host = a.Addresses.Count > 0 ? a.Addresses[0] : "",
+                    port = a.Port,
+                    addresses = a.Addresses,
+                    version = a.Version,
+                    alreadyAdded = a.Addresses.Any(address => added.Contains((address, a.Port))),
+                }),
+                message = result.Message,
+            };
+        });
     }
 
     private static void MapPush(RouteGroupBuilder api)

@@ -6,6 +6,18 @@
     "emptyTitle": "No sources yet",
     "emptyBody": "Pick one from the list below. Each source adds sensors that you can then show on your dials."
   },
+  "discovery": {
+    "title": "Found on your network",
+    "subtitle": "VU Studio Agents announcing themselves on this network.",
+    "refresh": "Search again",
+    "searching": "Searching the network…",
+    "add": "Add",
+    "version": "version {{version}}",
+    "empty": "No new agents found. Make sure the agent is running and on the same network, or add it by its address below.",
+    "unavailable": "Network search is not available on this machine. Add the agent by its address below.",
+    "error": "Could not search the network.",
+    "allAdded": "All the agents found are already in your sources."
+  },
   "add": {
     "title": "Add a source",
     "subtitle": "Choose what you want to connect.",

@@ -6,6 +6,18 @@
     "emptyTitle": "Ancora nessuna fonte",
     "emptyBody": "Scegline una dall’elenco qui sotto. Ogni fonte aggiunge sensori che potrai mostrare sui tuoi dial."
   },
+  "discovery": {
+    "title": "Trovati sulla tua rete",
+    "subtitle": "Gli agent di VU Studio che si annunciano su questa rete.",
+    "refresh": "Cerca di nuovo",
+    "searching": "Ricerca in corso sulla rete…",
+    "add": "Aggiungi",
+    "version": "versione {{version}}",
+    "empty": "Nessun nuovo agent trovato. Verifica che l’agent sia in esecuzione e sulla stessa rete, oppure aggiungilo con il suo indirizzo qui sotto.",
+    "unavailable": "La ricerca in rete non è disponibile su questo computer. Aggiungi l’agent con il suo indirizzo qui sotto.",
+    "error": "Impossibile cercare sulla rete.",
+    "allAdded": "Tutti gli agent trovati sono già tra le tue fonti."
+  },
   "add": {
     "title": "Aggiungi una fonte",
     "subtitle": "Scegli cosa vuoi collegare.",

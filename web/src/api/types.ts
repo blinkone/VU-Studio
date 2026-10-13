@@ -613,3 +613,21 @@ export interface HistoryPointDto {
   time: string;
   value: number;
 }
+
+// ---------------------------------------------------------------- discovery
+
+export interface DiscoveredAgentDto {
+  name: string;
+  host: string;
+  port: number;
+  addresses: string[];
+  version: string | null;
+  /** An `agent` source already points at this host and port. */
+  alreadyAdded: boolean;
+}
+
+export interface DiscoveredAgentsDto {
+  agents: DiscoveredAgentDto[];
+  /** Set when network discovery could not run (no multicast); the list is then empty. */
+  message: string | null;
+}

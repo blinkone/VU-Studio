@@ -3,6 +3,7 @@ import { api } from './client';
 import type {
   AssetInfo,
   AuthDto,
+  DiscoveredAgentsDto,
   FontInfo,
   IconInfo,
   InfoDto,
@@ -20,6 +21,7 @@ export const queryKeys = {
   config: ['config'] as const,
   sensors: ['sensors'] as const,
   providers: ['providers'] as const,
+  discoveredAgents: ['discovery', 'agents'] as const,
   themes: ['catalog', 'themes'] as const,
   fonts: ['catalog', 'fonts'] as const,
   icons: ['catalog', 'icons'] as const,
@@ -56,4 +58,14 @@ export const useUnits = (unit: string | undefined) =>
     queryFn: () => api.get<string[]>(`/api/units/${encodeURIComponent(unit ?? '')}`),
     enabled: unit !== undefined,
     staleTime: Infinity,
+  });
+
+/** Agents found on the LAN. The first call can take ~3 s; the service caches the scan and refreshes it at most every 60 s. */
+export const useDiscoveredAgents = () =>
+  useQuery({
+    queryKey: queryKeys.discoveredAgents,
+    queryFn: () => api.get<DiscoveredAgentsDto>('/api/discovery/agents'),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+    retry: false,
   });

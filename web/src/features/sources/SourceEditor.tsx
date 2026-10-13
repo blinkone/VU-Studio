@@ -11,7 +11,13 @@ import { SettingsSections } from './SettingsSections';
 import { defaultSettings, materializeSettings, missingRequired, type SettingsValues } from './settings';
 import classes from './sources.module.css';
 
-export type EditorTarget = { mode: 'add'; type: string } | { mode: 'edit'; id: string };
+/** Values to start a new source with (e.g. an agent found on the network). */
+export interface EditorPrefill {
+  name?: string;
+  settings?: SettingsValues;
+}
+
+export type EditorTarget = { mode: 'add'; type: string; prefill?: EditorPrefill } | { mode: 'edit'; id: string };
 
 export interface EditorResult {
   id: string;
@@ -77,10 +83,11 @@ export function SourceEditor({ target, opened, instances, types, isLocal, onClos
     >
       {target && descriptor && (
         <EditorBody
-          key={target.mode === 'add' ? `add:${target.type}` : `edit:${target.id}`}
+          key={target.mode === 'add' ? `add:${target.type}:${JSON.stringify(target.prefill ?? null)}` : `edit:${target.id}`}
           mode={target.mode}
           descriptor={descriptor}
           instance={instance}
+          prefill={target.mode === 'add' ? target.prefill : undefined}
           takenIds={new Set(instances.filter((i) => i.id !== instance?.id).map((i) => i.id))}
           readOnly={readOnly}
           autoFocus={!isPhone}
@@ -96,6 +103,7 @@ interface EditorBodyProps {
   mode: 'add' | 'edit';
   descriptor: ProviderDescriptor;
   instance: ProviderInstanceConfig | undefined;
+  prefill: EditorPrefill | undefined;
   takenIds: ReadonlySet<string>;
   readOnly: boolean;
   autoFocus: boolean;
@@ -103,14 +111,14 @@ interface EditorBodyProps {
   onSubmit: (result: EditorResult) => void;
 }
 
-function EditorBody({ mode, descriptor, instance, takenIds, readOnly, autoFocus, onCancel, onSubmit }: EditorBodyProps) {
+function EditorBody({ mode, descriptor, instance, prefill, takenIds, readOnly, autoFocus, onCancel, onSubmit }: EditorBodyProps) {
   const { t, i18n } = useTranslation('sources');
   const { t: tc } = useTranslation('common');
 
-  const [name, setName] = useState(instance?.name ?? '');
+  const [name, setName] = useState(instance?.name ?? prefill?.name ?? '');
   const [id, setId] = useState(() => instance?.id ?? suggestId(descriptor.type, takenIds));
   const [settings, setSettings] = useState<SettingsValues>(() =>
-    instance ? structuredClone(instance.settings) : defaultSettings(descriptor.settings),
+    instance ? structuredClone(instance.settings) : { ...defaultSettings(descriptor.settings), ...structuredClone(prefill?.settings ?? {}) },
   );
   const [advancedOpen, setAdvancedOpen] = useState(false);
 

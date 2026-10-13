@@ -21,6 +21,9 @@ public interface IAgentDiscovery
 {
     /// <summary>Browses for agents for up to <paramref name="timeout"/> and returns what answered, sorted by name.</summary>
     Task<IReadOnlyList<DiscoveredAgent>> DiscoverAsync(TimeSpan timeout, CancellationToken cancellationToken = default);
+
+    /// <summary>Why the last browse could not run at all (no multicast, no network interface), or null when it ran.</summary>
+    string? LastFailure => null;
 }
 
 /// <summary>Collects mDNS records (PTR, SRV, TXT, A/AAAA) and joins them into <see cref="DiscoveredAgent"/>s.</summary>
@@ -171,15 +174,19 @@ public sealed class AgentRecordCollector
 public sealed class MdnsAgentDiscovery : IAgentDiscovery
 {
     private readonly ILogger _logger;
+    private volatile string? _lastFailure;
 
     public MdnsAgentDiscovery(ILogger? logger = null)
     {
         _logger = logger ?? NullLogger.Instance;
     }
 
+    public string? LastFailure => _lastFailure;
+
     public async Task<IReadOnlyList<DiscoveredAgent>> DiscoverAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
     {
         var collector = new AgentRecordCollector();
+        _lastFailure = null;
         try
         {
             using var mdns = new MulticastService();
@@ -213,6 +220,7 @@ public sealed class MdnsAgentDiscovery : IAgentDiscovery
         }
         catch (Exception ex)
         {
+            _lastFailure = ex.Message;
             _logger.LogInformation(ex, "mDNS browsing failed; use the manual address instead");
         }
 
