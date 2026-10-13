@@ -2,16 +2,20 @@ name: Release
 
 # Tag v* (for example v0.2.0 or v0.2.0-rc.1): build the Windows installer and the Agent
 # binaries / container image, then publish a GitHub Release with checksums.
+# Any other push builds the same installer and Agent packages as a "dev" version and keeps
+# them as downloadable workflow artifacts (no image push, no release).
 on:
   push:
     tags: ["v*"]
+    branches: ["**"]
+    paths-ignore: ["**.md", "docs/**"]
 
 permissions:
   contents: read
 
 concurrency:
   group: release-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 env:
   DOTNET_NOLOGO: "true"
@@ -32,11 +36,15 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Version from tag
+      - name: Version
         id: ver
         shell: bash
         run: |
-          version="${GITHUB_REF_NAME#v}"
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="0.1.0-dev.${GITHUB_RUN_NUMBER}"
+          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Set up .NET SDK
@@ -88,7 +96,7 @@ jobs:
           name: installer
           path: artifacts/installer/VuStudio-Setup-*.exe
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 30
 
   linux:
     name: Agent (Linux)
@@ -103,9 +111,16 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Version from tag
+      - name: Version
         id: ver
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="0.1.0-dev.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v4
@@ -140,16 +155,17 @@ jobs:
           name: agent
           path: artifacts/release/*
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 30
 
+      # The multi-arch image is built and pushed for tags only.
       - name: Detect Agent Dockerfile
         id: docker
         run: |
-          if [ -f deploy/agent/Dockerfile ]; then
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ -f deploy/agent/Dockerfile ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Docker::deploy/agent/Dockerfile not found, skipping the image."
+            echo "::notice title=Docker::Not a release tag or no deploy/agent/Dockerfile, skipping the image."
           fi
 
       - name: Lowercase image name
@@ -199,6 +215,7 @@ jobs:
   release:
     name: GitHub Release
     needs: [windows, linux]
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
