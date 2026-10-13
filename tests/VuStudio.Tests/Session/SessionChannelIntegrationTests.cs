@@ -108,4 +108,50 @@ public sealed class SessionChannelIntegrationTests : IDisposable
         var n = await notified.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
         Assert.Equal(new SessionNotification("Alarm", "GPU 90 °C", "alert"), n);
     }
+    [Fact]
+    public async Task Remove_status_and_disabling_reach_the_service()
+    {
+        var hub = new SensorHub();
+        var session = new SessionState(hub, TimeProvider.System);
+        var config = new ConfigStore(Path.Combine(_dir, "config.json"), NullLogger<ConfigStore>.Instance);
+        config.Update(c => c.Providers.Add(new ProviderInstanceConfig { Id = "my-script", Type = "script", Enabled = true }));
+        var services = new SessionServices(NullLoggerFactory.Instance);
+        await using var manager = new ProviderManager([new ScriptProviderFactory()], hub, services, NullLogger<ProviderManager>.Instance);
+        await manager.ApplyAsync(config.Current.Providers, TestContext.Current.CancellationToken);
+        var notifications = new NotificationHub(NullLogger<NotificationHub>.Instance);
+        var channel = new SessionChannel(hub, session, config, manager, notifications, NullLogger<SessionChannel>.Instance);
+
+        await using var host = await TestHost.StartAsync(app => app.Map("/api/session", async (HttpContext http) =>
+        {
+            using var socket = await http.WebSockets.AcceptWebSocketAsync();
+            await channel.HandleAsync(socket, http.RequestAborted);
+            return Results.Empty;
+        }));
+
+        await using var client = new SessionClient(host.SessionUri, new SessionClientOptions { InitialReconnectDelay = TimeSpan.FromMilliseconds(50) });
+        client.Define("my-script", [new SensorInfo { Id = "a", Name = "A" }, new SensorInfo { Id = "b", Name = "B" }]);
+        client.Publish("my-script", "a", 1);
+        client.Publish("my-script", "b", 2);
+        client.Start();
+        await Wait.UntilAsync(() => hub.GetNumber("my-script/a") is not null && hub.GetNumber("my-script/b") is not null, because: "values in the hub");
+
+        // "remove" drops the sensor from the catalog; "status" lands in the provider status list.
+        client.Remove("my-script", "a");
+        client.ReportStatus("my-script", ProviderHealth.Degraded, "exit code 2");
+        await Wait.UntilAsync(() => hub.Get("my-script/a") is null, because: "removed");
+        await Wait.UntilAsync(
+            () => manager.GetStatus().Single(s => s.Id == "my-script") is { Health: ProviderHealth.Degraded, Message: "exit code 2" },
+            because: "status reported");
+
+        // The tray can never redefine or remove the service-owned lock sensor.
+        client.Remove(SessionSensors.Provider, "locked");
+        client.Publish(SessionSensors.Provider, SessionSensors.AudioPeak, 5);
+        await Wait.UntilAsync(() => hub.GetNumber(WellKnownSensors.AudioPeak) is not null, because: "later message processed");
+        Assert.NotNull(hub.Get(WellKnownSensors.SessionLocked));
+
+        // Disabling the provider in the config drops its remaining sensors.
+        config.Update(c => c.Providers.Single(p => p.Id == "my-script").Enabled = false);
+        await manager.ApplyAsync(config.Current.Providers, TestContext.Current.CancellationToken);
+        Assert.Null(hub.Get("my-script/b"));
+    }
 }

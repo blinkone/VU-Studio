@@ -112,7 +112,7 @@ public sealed class SessionChannel(
             var root = doc.RootElement;
             var type = root.TryGetProperty("type", out var t) ? t.GetString() : null;
             var provider = root.TryGetProperty("provider", out var p) ? p.GetString() ?? WellKnownSensors.SessionProvider : WellKnownSensors.SessionProvider;
-            if (type is "define" or "values" && !IsAllowedProvider(provider))
+            if (type is "define" or "values" or "remove" or "status" && !IsAllowedProvider(provider))
             {
                 logger.LogWarning("Session channel: rejected data for provider '{Provider}'", provider);
                 return;
@@ -124,7 +124,8 @@ public sealed class SessionChannel(
                 case "define" when root.TryGetProperty("sensors", out var sensors):
                     foreach (var info in sensors.Deserialize<List<SensorInfo>>(Json.Compact) ?? [])
                     {
-                        if (!string.IsNullOrWhiteSpace(info.Id))
+                        // session/locked belongs to SessionState; a tray definition would change its staleness.
+                        if (!string.IsNullOrWhiteSpace(info.Id) && !IsLockedSensor(provider, info.Id))
                         {
                             sink.Define(info);
                         }
@@ -138,6 +139,24 @@ public sealed class SessionChannel(
                     }
 
                     break;
+                case "remove" when root.TryGetProperty("sensors", out var removed) && removed.ValueKind == JsonValueKind.Array:
+                    foreach (var item in removed.EnumerateArray())
+                    {
+                        if (item.GetString() is { Length: > 0 } localId && !IsLockedSensor(provider, localId))
+                        {
+                            sink.Remove(localId);
+                        }
+                    }
+
+                    break;
+                case "status" when provider != WellKnownSensors.SessionProvider
+                                   && root.TryGetProperty("health", out var h)
+                                   && Enum.TryParse<ProviderHealth>(h.GetString(), ignoreCase: true, out var health):
+                    providers.ReportUserSessionStatus(
+                        provider,
+                        health,
+                        root.TryGetProperty("message", out var m) && m.ValueKind == JsonValueKind.String ? m.GetString() : null);
+                    break;
                 case "hello":
                     logger.LogInformation("Desktop app: {Message}", message);
                     break;
@@ -148,6 +167,9 @@ public sealed class SessionChannel(
             logger.LogDebug(ex, "Ignoring malformed session message");
         }
     }
+
+    private static bool IsLockedSensor(string provider, string localId) =>
+        provider == WellKnownSensors.SessionProvider && localId == "locked";
 
     private void Publish(ISensorSink sink, string provider, string localId, JsonElement value)
     {

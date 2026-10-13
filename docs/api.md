@@ -153,7 +153,10 @@ Client → server:
 | `hello` | `user`, `machine`, `version` |
 | `define` | `provider` (`"session"` or a user-session provider id), `sensors: [SensorInfo with local ids]` |
 | `values` | `provider`, `values: { "<localId>": number \| string \| null }` |
-| `status` | `provider`, `health`, `message` |
+| `status` | `provider` (a user-session provider id), `health` (camelCase `ProviderHealth`), `message`; shown in the provider status list |
+| `remove` | `provider`, `sensors: [localIds]`: drops those sensors from the catalog |
+
+`session/locked` is owned by the service: the tray only reports its value, and `define`/`remove` for it are ignored. Sensors of a user-session provider are dropped when it is disabled or deleted.
 
 Server → client:
 

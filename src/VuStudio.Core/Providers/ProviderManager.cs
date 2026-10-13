@@ -58,6 +58,23 @@ public sealed partial class ProviderManager : IAsyncDisposable
     public IReadOnlyList<ProviderStatusInfo> GetStatus() =>
         _status.Values.OrderBy(s => s.Id, StringComparer.Ordinal).ToList();
 
+    /// <summary>
+    /// Records the health the desktop app reports for a user-session provider it runs.
+    /// Ignored for unknown, disabled or service-side instances.
+    /// </summary>
+    public bool ReportUserSessionStatus(string id, ProviderHealth health, string? message)
+    {
+        if (!_status.TryGetValue(id, out var current) || !current.Enabled
+            || !_factories.TryGetValue(current.Type, out var factory) || !factory.Descriptor.RunsInUserSession)
+        {
+            return false;
+        }
+
+        var config = new ProviderInstanceConfig { Id = current.Id, Type = current.Type, Name = current.Name, Enabled = true };
+        SetStatus(config, health, message is { Length: > 500 } ? message[..500] : message, current.Restarts);
+        return true;
+    }
+
     [GeneratedRegex("^[a-z0-9][a-z0-9-]{0,62}$")]
     public static partial Regex ValidId();
 
@@ -114,9 +131,20 @@ public sealed partial class ProviderManager : IAsyncDisposable
                 }
             }
 
-            foreach (var id in _status.Keys.Where(id => !wanted.ContainsKey(id)).ToList())
+            // User-session providers run in the tray, so StopAsync never sees them: drop their
+            // sensors here once they are removed or disabled.
+            foreach (var (id, status) in _status.ToArray())
             {
-                _status.TryRemove(id, out _);
+                var gone = !wanted.TryGetValue(id, out var current) || !current.Enabled;
+                if (gone && _factories.TryGetValue(status.Type, out var f) && f.Descriptor.RunsInUserSession)
+                {
+                    _hub.RemoveProvider(id);
+                }
+
+                if (current is null)
+                {
+                    _status.TryRemove(id, out _);
+                }
             }
 
             foreach (var config in wanted.Values)
