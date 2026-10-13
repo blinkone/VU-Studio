@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -106,6 +107,66 @@ internal sealed class MainForm : Form
     {
         base.OnShown(e);
         _ = InitializeWebViewAsync();
+    }
+
+    /// <summary>
+    /// Closing only hides the window, but the page behind it would keep animating the dial previews and
+    /// holding its live connection. Suspend it while hidden (scripts, timers and rendering stop, the page
+    /// and any unsaved edits stay) and resume it when the window is shown again.
+    /// </summary>
+    protected override void OnVisibleChanged(EventArgs e)
+    {
+        base.OnVisibleChanged(e);
+        if (Visible)
+        {
+            ResumePage();
+        }
+        else
+        {
+            _ = SuspendPageAsync();
+        }
+    }
+
+    private async Task SuspendPageAsync()
+    {
+        if (_web?.CoreWebView2 is not { IsSuspended: false } core)
+        {
+            return;
+        }
+
+        try
+        {
+            // Needs the control to be invisible already: the WinForms control follows the form.
+            await core.TrySuspendAsync();
+            _log.LogDebug("The page is suspended while the window is hidden");
+        }
+        catch (Exception ex) when (ex is COMException or InvalidOperationException or ObjectDisposedException)
+        {
+            _log.LogDebug(ex, "Could not suspend the page");
+        }
+
+        // Shown again while the suspend was still pending.
+        if (Visible)
+        {
+            ResumePage();
+        }
+    }
+
+    private void ResumePage()
+    {
+        if (_web?.CoreWebView2 is not { IsSuspended: true } core)
+        {
+            return;
+        }
+
+        try
+        {
+            core.Resume();
+        }
+        catch (Exception ex) when (ex is COMException or InvalidOperationException or ObjectDisposedException)
+        {
+            _log.LogDebug(ex, "Could not resume the page");
+        }
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)

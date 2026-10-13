@@ -38,7 +38,7 @@ All modules are built and covered by automated tests on Linux. Real-hardware tes
 
 These parts compile and pass tests against fakes and fixtures but have not run on the real thing yet:
 
-- [ ] VU1 hub and dials over USB serial on Windows
+- [x] VU1 hub and dials over USB serial on Windows (4 dials, v0.2.0)
 - [ ] Windows service install/uninstall via the installer; tray app (WebView2, audio, media, lock, accent, RTSS)
 - [ ] LibreHardwareMonitor 0.9.6 with and without PawnIO; HWiNFO shared memory under LocalSystem
 - [ ] Agent Docker image on Unraid, `install.sh` on a Steam Deck, mDNS discovery over the LAN
