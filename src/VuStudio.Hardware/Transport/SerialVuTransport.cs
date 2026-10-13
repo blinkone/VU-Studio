@@ -8,7 +8,10 @@ namespace VuStudio.Hardware.Transport;
 /// <summary>
 /// The VU1 hub on a USB serial port: 115200 baud, 8N1, no handshake.
 /// A dedicated background thread reads the port and splits lines into a queue, so serial reads never block a
-/// thread-pool thread. Unplugging is detected from I/O errors and by checking that the port still exists.
+/// thread-pool thread. It only reads bytes the driver reports as waiting, under the same lock as
+/// <see cref="DiscardInput"/>: on Windows <c>DiscardInBuffer</c> (PurgeComm with PURGE_RXABORT) aborts a pending
+/// read, which surfaced as "The operation was canceled" and dropped the link before every command.
+/// Unplugging is detected from I/O errors and by checking that the port still exists.
 /// </summary>
 public sealed class SerialVuTransport : IVuTransport
 {
@@ -18,8 +21,11 @@ public sealed class SerialVuTransport : IVuTransport
     private const int Open = 1;
     private const int Closed = 2;
 
-    /// <summary>How long a blocking read waits; bounds how quickly the reader notices a close or a vanished port.</summary>
+    /// <summary>Read timeout of the port, a safety net only: the reader never reads more than is waiting.</summary>
     private static readonly TimeSpan ReadPollInterval = TimeSpan.FromMilliseconds(250);
+
+    /// <summary>Pause between checks for waiting bytes while the hub is silent; well below a reply's round trip.</summary>
+    private static readonly TimeSpan IdlePollInterval = TimeSpan.FromMilliseconds(2);
     private static readonly TimeSpan PresenceCheckInterval = TimeSpan.FromSeconds(1);
     private static readonly TimeSpan WriteTimeout = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan ReaderStopTimeout = TimeSpan.FromSeconds(2);
@@ -209,31 +215,37 @@ public sealed class SerialVuTransport : IVuTransport
             var stream = port.BaseStream;
             while (!_stopping.IsSet)
             {
-                int count;
-                try
+                var received = false;
+                lock (_receiveLock)
                 {
-                    count = stream.Read(buffer, 0, buffer.Length);
-                }
-                catch (TimeoutException)
-                {
-                    count = -1;
-                }
-
-                if (count > 0)
-                {
-                    lock (_receiveLock)
+                    var waiting = port.BytesToRead;
+                    if (waiting > 0)
                     {
-                        _splitter.Feed(buffer.AsSpan(0, count), _addLine);
-                    }
+                        int count;
+                        try
+                        {
+                            // Never blocks: the bytes are already in the driver's buffer.
+                            count = stream.Read(buffer, 0, Math.Min(waiting, buffer.Length));
+                        }
+                        catch (Exception ex) when (ex is TimeoutException or OperationCanceledException && !_stopping.IsSet)
+                        {
+                            count = 0;
+                        }
 
+                        if (count > 0)
+                        {
+                            _splitter.Feed(buffer.AsSpan(0, count), _addLine);
+                            received = true;
+                        }
+                    }
+                }
+
+                if (received)
+                {
                     continue;
                 }
 
-                if (count == 0)
-                {
-                    // Serial streams time out instead of returning 0; never spin if a driver does it anyway.
-                    _stopping.Wait(ReadPollInterval);
-                }
+                _stopping.Wait(IdlePollInterval);
 
                 if (_time.GetElapsedTime(lastPresenceCheck) >= PresenceCheckInterval)
                 {
