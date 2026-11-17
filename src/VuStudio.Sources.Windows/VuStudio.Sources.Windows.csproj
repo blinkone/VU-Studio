@@ -8,6 +8,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibreHardwareMonitorLib" />
+    <PackageReference Include="System.IO.Ports" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="VuStudio.Tests" />
